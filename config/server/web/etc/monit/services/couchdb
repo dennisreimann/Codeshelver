@@ -1,0 +1,3 @@
+check process couchdb with pidfile /usr/local/var/run/couchdb/couchdb.pid
+  start program = "/etc/init.d/couchdb start"
+  stop program  = "/etc/init.d/couchdb stop"

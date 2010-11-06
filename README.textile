@@ -1,0 +1,24 @@
+h1. Codeshelver
+
+Codeshelver lets you clean up your GitHub watchlist by storing repositories
+you would like to remember on your shelve. You can tag any repository and
+search for it later on - until then it won't spam your dashboard timeline.
+
+h2. Installation
+
+# Copy config/app.example.js to config/app.js and enter your credentials
+# Install and start couchdb
+# Install the development/deployment dependencies
+  
+  @$ bundle install@
+# Setup the database (see the Rakefile for more information)
+  
+  @$ rake db:setup@
+# Start the server
+
+  @$ node server.js@
+or for developmet purposes:
+  
+  @$ node run_dev_server.js@
+
+_I'm on a shelve!_

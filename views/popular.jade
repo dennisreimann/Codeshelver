@@ -1,0 +1,33 @@
+.header
+  h1= title
+
+p
+  | Codeshelver contains #{totalRepos} repositor#{(totalRepos == 1 ? 'y' : 'ies')}
+  - if (tag)
+    | tagged with #{em= tag}.
+  - else
+    br
+    | Here are the #{reposLimit} most popular tags and repos
+
+- if (!tag)
+  #tagcloud
+    - minFontSize = 12
+    - maxFontSize = 22
+    - each tag in tags
+      a(href='?tag=' + tag.key, title=tag.value + ' repositories', style='font-size:' +
+        ((((tag.value - minTagCount) * (maxFontSize - minFontSize)) / (maxTagCount - minTagCount) ) + minFontSize) + 'pt')
+        = tag.key
+
+ul#repos
+  - each repo in repos
+    - owner = repo.key[tag ? 1 : 0]
+    - name = repo.key[tag ? 2 : 1]
+    li
+      .entry
+        strong #{linkRepo(owner, name)}
+        .count= repo.value
+      .options
+        form(method='get', action='/shelve/' + owner + '/' + name)
+          button.edit(type='submit') shelve
+p
+  | Besides these there are also some more #{linkTo('interesting repos', 'http://github.com/repositories')} :)

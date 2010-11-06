@@ -1,0 +1,34 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    couchrest (1.0.1)
+      json (>= 1.4.6)
+      mime-types (>= 1.15)
+      rest-client (>= 1.5.1)
+    json (1.4.6)
+    mime-types (1.16)
+    open4 (0.9.6)
+    rake (0.8.7)
+    rake-remote_task (2.0.2)
+      open4 (~> 0.9.0)
+      rake (~> 0.8.0)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
+    vlad (2.1.0)
+      open4 (~> 0.9.0)
+      rake (~> 0.8.0)
+      rake-remote_task (~> 2.0)
+    vlad-extras (0.0.3)
+    vlad-git (2.2.0)
+      vlad (>= 2.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler
+  couchrest
+  json
+  vlad
+  vlad-extras
+  vlad-git

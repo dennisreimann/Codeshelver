@@ -1,0 +1,21 @@
+#!/bin/bash
+
+user=deploy
+dir=/var/www/$1/current
+srv_file=$dir/server.js
+pid_file=$dir/log/server.pid
+log_file=$dir/log/server.log
+
+case $2 in
+   start)
+      sudo -u "$user" NODE_ENV=production node "$srv_file" >> "$log_file" 2>&1 &
+      echo `ps ax | grep $srv_file | grep -v grep | awk '{print $1}'` > "$pid_file"
+      chown "$user":"$user" "$log_file"
+      chown "$user":"$user" "$pid_file" ;;
+    stop)
+      kill `cat "$pid_file"`
+      rm "$pid_file" ;;
+    *)  
+      echo "usage: /etc/init.d/express_app {app_name} {start|stop}" ;;
+esac
+exit 0

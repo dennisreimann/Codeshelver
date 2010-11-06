@@ -1,0 +1,42 @@
+.header
+  h1= title
+  - if (totalRepos > 0)
+    form#filter(method='get')
+      div
+        input(type='text', id='filter_tag', name='tag', value=tag)
+        | 
+        button(type='submit') filter by tag
+
+- if (totalRepos == 0)
+  p
+    - if (tag)
+      | You have not tagged any repositories with #{em= tag}.
+    - if (!tag)
+      | You have not shelved any repositories, yet.
+    br
+    | Go to #{linkTo('GitHub', 'http://github.com')} and find some interesting repos :)
+
+- if (totalRepos > 0)
+  p
+    | Your shelf contains #{totalRepos} repositor#{totalRepos == 1 ? 'y' : 'ies'}
+    - if (tag)
+      | tagged with #{em= tag}.
+  ul#repos
+    - each repo in repos
+      li
+        .entry
+          strong #{linkRepo(repo.value.repo.owner, repo.value.repo.name)}
+          - if (repo.value.tags.length)
+            .tags
+              - each tag in repo.value.tags
+                #{linkTo(tag, '?tag=' + tag)}
+        .options
+          form(method='get', action='/shelve/' + repo.value.repo.owner + '/' + repo.value.repo.name)
+            button.edit(type='submit') edit
+          form(method='post', action='/shelve/' + repo.value.repo.owner + '/' + repo.value.repo.name)
+            input(type='hidden', name='_method', value='delete')
+            button.delete(type='submit') delete
+  p
+    | You reached the end of your shelf!
+    br
+    | Now go to #{linkTo('GitHub', 'http://github.com')} and find some more repos :)
