@@ -17,6 +17,7 @@ p
       a(href='?tag=' + tag.key, title=tag.value + ' repositories', style='font-size:' +
         ((((tag.value - minTagCount) * (maxFontSize - minFontSize)) / (maxTagCount - minTagCount) ) + minFontSize) + 'pt')
         = tag.key
+      | 
 
 ul#repos
   - each repo in repos
