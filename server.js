@@ -1,5 +1,4 @@
 require.paths.unshift(__dirname);
-require.paths.unshift(__dirname + '/vendor');
 require.paths.unshift(__dirname + '/lib/node/');
 
 var
@@ -8,7 +7,7 @@ var
   utils = require('utils'),
   session = require('connect/middleware/session'),
   express = require('express'),
-  OAuth2 = require('oauth2').OAuth2,
+  OAuth2 = require('node-oauth').OAuth2,
   couchdb = require('node-couchdb');
   
 var
