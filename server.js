@@ -93,7 +93,6 @@ app.configure('development', function() {
 
 app.configure('production', function() {
   app.set('baseURL', 'http://codeshelver.com');
-  app.use(express.errorHandler()); 
 });
 
 // Authentication
@@ -342,6 +341,19 @@ app.del('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
         }
         res.redirect('/shelf');
       });
+    }
+  });
+});
+
+// Error handling
+app.error(function(err, req, res, next) {
+  if (app.set('env') != 'production') next(err);
+  var user = req.session.user;
+  res.render('error.jade', {
+    locals: {
+      title: 'An error occurred',
+      user: user,
+      error: err
     }
   });
 });
