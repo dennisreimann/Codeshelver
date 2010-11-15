@@ -17,7 +17,7 @@ var
   db = client.db('codeshelver');
 
 // Middleware - take care, the order of these matters!
-app.use(express.favicon());
+app.use(express.favicon(pubDir + '/favicon.ico'));
 app.use(express.compiler({ src: pubDir, enable: ['sass'] }));
 app.use(express.logger({ format: ':method :url :response-time' }));
 app.use(express.bodyDecoder());
