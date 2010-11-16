@@ -21,6 +21,9 @@ app.dynamicHelpers({
   messages: function(req) {
     var msg = req.flash('info');
     return msg.length ? '<p class="info">' + msg + '</p>': '';
+  },
+  user: function(req) {
+    return req.session.user;
   }
 });
 
@@ -141,8 +144,7 @@ app.get(app.set('oauth callbackPath'), function(req, res) {
 app.get('/', function(req, res) {
   res.render('index', {
     locals: {
-      title: 'Codeshelver',
-      user: req.session.user
+      title: 'Codeshelver'
     }
   });
 });
@@ -181,7 +183,6 @@ app.get('/popular', function(req, res) {
       res.render('popular', {
         locals: {
           title: title,
-          user: req.session.user,
           tag: tag,
           tags: popularTags,
           repos: popularRepos,
@@ -212,7 +213,6 @@ app.get('/shelf.:format?', requireLogin, function(req, res) {
         locals: {
           title: title,
           tag: tag,
-          user: user,
           repos: data.rows,
           totalRepos: parseInt(data.rows.length)
         }
@@ -240,7 +240,6 @@ app.get('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
       res.render('shelve', {
         locals: {
           title: 'Shelve ' + owner + '/' + repo,
-          user: user,
           owner: owner,
           repo: repo,
           tags: tags
@@ -338,11 +337,9 @@ app.del('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
 // Error handling
 app.error(function(err, req, res, next) {
   if (app.set('env') != 'production') next(err);
-  var user = req.session.user;
   res.render('error.jade', {
     locals: {
       title: 'An error occurred',
-      user: user,
       error: err
     }
   });
