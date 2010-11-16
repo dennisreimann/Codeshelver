@@ -1,4 +1,3 @@
-require.paths.unshift(__dirname);
 require.paths.unshift(__dirname + '/lib/node/');
 
 var
@@ -8,6 +7,7 @@ var
   session = require('connect/middleware/session'),
   express = require('express'),
   OAuth2 = require('node-oauth').OAuth2,
+  auth = require('index'),
   couchdb = require('node-couchdb');
   
 var
@@ -15,16 +15,6 @@ var
   pubDir = __dirname + '/public',
   client = couchdb.createClient(5984, 'localhost'),
   db = client.db('codeshelver');
-
-// Middleware - take care, the order of these matters!
-app.use(express.favicon(pubDir + '/favicon.ico'));
-app.use(express.compiler({ src: pubDir, enable: ['sass'] }));
-app.use(express.logger({ format: ':method :url :response-time' }));
-app.use(express.bodyDecoder());
-app.use(express.staticProvider(pubDir));
-app.use(express.methodOverride());
-app.use(express.cookieDecoder());
-app.use(express.session());
 
 // Helpers
 app.dynamicHelpers({
@@ -95,55 +85,55 @@ app.configure('production', function() {
   app.set('baseURL', 'http://codeshelver.com');
 });
 
-// Authentication
+// Middleware - take care, the order of these matters!
+app.use(express.favicon(pubDir + '/favicon.ico'));
+app.use(express.compiler({ src: pubDir, enable: ['sass'] }));
+app.use(express.logger({ format: ':method :url :response-time' }));
+app.use(express.bodyDecoder());
+app.use(express.staticProvider(pubDir));
+app.use(express.methodOverride());
+app.use(express.cookieDecoder());
+app.use(express.session());
+app.use(auth([auth.Github({
+  appId: config[app.set('env')].oauth.clientId,
+  appSecret: config[app.set('env')].oauth.secret,
+  callback: app.set('baseURL') + app.set('oauth callbackPath')
+})]));
+
+// GitHub OAuth 2.0, see: http://github.com/account/applications
+var oauth = new OAuth2(config[app.set('env')].oauth.clientId, config[app.set('env')].oauth.secret,
+  app.set('oauth baseURL'), app.set('oauth authorizePath'), app.set('oauth accessTokenPath'));
+  
 app.get('/signin', function(req, res) {
-  res.redirect(oauth.getAuthorizeUrl({ redirect_uri: app.set('baseURL') + app.set('oauth callbackPath') }));
+  req.authenticate(['github'], function(error, authenticated) {});
 });
 
 app.get('/signout', function(req, res) {
+  req.logout();
   req.session.destroy();
   res.clearCookie('user');
   res.redirect('/');
 });
 
-// GitHub OAuth 2.0, see:
-// http://github.com/account/applications
-// Most of the authetication logic is borrowed from:
-// http://github.com/fictorial/nozzle/blob/master/demo/08-github-oauth2.js
-var oauth = new OAuth2(config[app.set('env')].oauth.clientId, config[app.set('env')].oauth.secret,
-  app.set('oauth baseURL'), app.set('oauth authorizePath'), app.set('oauth accessTokenPath'));
-  
 app.get(app.set('oauth callbackPath'), function(req, res) {
-  oauth.getOAuthAccessToken(req.query.code, null, function(error, accessToken, refreshToken) {
-    if (error && app.set('debug')) console.log('Access token request failed: ' + error);
-    oauth.getProtectedResource('https://github.com/api/v2/json/user/show/', accessToken, function(error, data, response) {
-      // Handle errors
-      if (error) {
-        if (app.set('debug')) console.log('Retrieving user data failed: ' + error);
-      } else {
-        try {
-          var user = JSON.parse(data).user;
-        } catch (e) {
-          if (app.set('debug')) console.log('Could not parse user data: ' + data);
-        }
-      }
-      // Proceed
-      if (user) {
-        var userData = {
-          id: user.id,
-          login: user.login,
-          gravatar: user.gravatar_id,
-          accessToken: accessToken };
-        req.session.user = userData;
-        res.cookie('user', JSON.stringify(userData), { path: '/', expires: new Date(Date.now() + 24*60*60*10) });
-        req.flash('info', 'Welcome, you are signed in now!');
-      } else {
-        req.flash('info', 'Unfortunately we could not sign you in, did you allow Codeshelver to access your GitHub account?');
-      }
-      // Redirect back or default to root url
-      var returnTo = req.session.buffer ? req.session.buffer.returnURL : '/';
-      res.redirect(returnTo);
-    });
+  req.authenticate(['github'], function(error, authenticated) {
+    if (error && app.set('debug')) console.log('Github authentication failed: ' + error);
+    if (authenticated) {
+      var user = req.getAuthDetails().user;
+      var userData = {
+        id: user.id,
+        login: user.login,
+        gravatar: user.gravatar_id,
+        accessToken: req.session.access_token };
+      req.session.user = userData;
+      res.cookie('user', JSON.stringify(userData), { path: '/', expires: new Date(Date.now() + 24*60*60*10) });
+      req.flash('info', 'Welcome, you are signed in now!');
+    } else {
+      req.flash('info', 'Unfortunately we could not sign you in, did you allow Codeshelver to access your GitHub account?');
+    }
+    // Redirect back or default to root url
+    var returnTo = req.session.buffer ? req.session.buffer.returnURL : '/';
+    res.redirect(returnTo);
   });
 });
 
