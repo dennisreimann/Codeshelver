@@ -149,6 +149,14 @@ var Codeshelver = {
     var login = parts[0];
     var shelfURL = self.baseURL + '/shelf/' + login;
     $('.userpage ul.actions').append('<li><a class="minibutton" href="' + shelfURL + '"><span>Shelf</span></a></li>');
+    // Load user data and show the count of shelved repos
+    if (typeof(Codeshelver.users[login]) == "undefined") {
+      JavaScript.load(shelfURL + '.js', function() {
+        var user = Codeshelver.users[login];
+        if (!user || !user.length) return;
+        $('ul.stats').append('<li><a href="' + shelfURL + '"><strong>' + user.length + '</strong><span>shelved repos</span></a></li>');
+      });
+    }
   },
 
   observeButtons: function() {
@@ -191,5 +199,7 @@ var Codeshelver = {
   }
 };
 
+Codeshelver.users = {};
 Codeshelver.repos = {};
+
 Codeshelver.init();

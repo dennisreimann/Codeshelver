@@ -238,7 +238,7 @@ app.get('/shelf/:login.:format?', function(req, res) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
     if (req.params.format == 'js') {
       res.contentType('javascript');
-      return res.send('Codeshelver.currentShelf = ' + (data ? JSON.stringify(data.rows) : null) + ';', {}, 200);
+      return res.send('Codeshelver.users["' + login + '"] = ' + (data ? JSON.stringify(data.rows) : null) + ';', {}, 200);
     } else {
       if (error) req.flash('info', error.error + ': ' + error.reason);
       res.render('shelf', {
