@@ -29,7 +29,6 @@ var Codeshelver = {
     }
     // Include jQuery
     self.includeGitHubJquery();
-    //self.includeLatestJquery();
     // Let's rock!
     self.adjustDashboard();
     self.addShelveLink();
@@ -41,18 +40,6 @@ var Codeshelver = {
   // Include GitHub's jQuery (no extra load)
   includeGitHubJquery: function() {
     $ = unsafeWindow.jQuery;
-  },
-  
-  // Include the latest jQuery (in case GitHubs version is not sufficient)
-  includeLatestJquery: function() {
-    var script = document.createElement('script');
-    script.src = 'http://code.jquery.com/jquery-latest.min.js';
-    script.type = 'text/javascript';
-    script.addEventListener("load", function() {
-      unsafeWindow.jQuery.noConflict();
-      $ = unsafeWindow.jQuery;
-    }, false);
-    document.getElementsByTagName('head')[0].appendChild(script);
   },
   
   // Parsing GitHub URLs
