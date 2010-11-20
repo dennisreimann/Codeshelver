@@ -18,7 +18,8 @@
 
 - if (totalRepos > 0)
   p
-    | Your shelf contains #{totalRepos} repositor#{totalRepos == 1 ? 'y' : 'ies'}
+    = login ? apostrophize(login) : 'Your '
+    | shelf contains #{totalRepos} repositor#{totalRepos == 1 ? 'y' : 'ies'}
     - if (tag)
       | tagged with #{em= tag}.
   ul#repos

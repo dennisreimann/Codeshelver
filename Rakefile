@@ -11,9 +11,9 @@ end
 
 begin
   require 'couchrest'
-  
+
   DB_URL = 'http://127.0.0.1:5984/codeshelver'
-  
+
   namespace :db do
     task :setup do
       @db = CouchRest.database!(DB_URL)
@@ -26,6 +26,12 @@ begin
           },
           :by_user_id_and_tag => {
             :map => "function(doc) { for(var i in doc.tags) { emit([doc.user.id, doc.tags[i]], doc); } }"
+          },
+          :by_user_login => {
+            :map => "function(doc) { emit([doc.user.login], doc); }"
+          },
+          :by_user_login_and_tag => {
+            :map => "function(doc) { for(var i in doc.tags) { emit([doc.user.login, doc.tags[i]], doc); } }"
           }
         }
       })
@@ -61,5 +67,3 @@ begin
 rescue LoadError
   puts "Could not load CouchRest - please run 'bundle install'"
 end
-
-

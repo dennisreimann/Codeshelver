@@ -17,6 +17,10 @@ var
   db = client.db('codeshelver');
 
 // Helpers
+var apostrophize = function(s) {
+  return s.charAt(s.length-1) == 's' ? s + "' " : s + "'s ";
+}
+
 app.dynamicHelpers({
   messages: function(req) {
     var msg = req.flash('info');
@@ -28,6 +32,7 @@ app.dynamicHelpers({
 });
 
 app.helpers({
+  apostrophize: apostrophize,
   linkTo: function(text, url) { return '<a href=' + url + '>' + text + '</a>'; },
   linkRepo: function(owner, name) {
     var text = owner + '/' + name;
@@ -212,12 +217,35 @@ app.get('/shelf.:format?', requireLogin, function(req, res) {
       res.render('shelf', {
         locals: {
           title: title,
+          login: null,
           tag: tag,
           repos: data.rows,
           totalRepos: parseInt(data.rows.length)
         }
       });
     }
+  });
+});
+
+app.get('/shelf/:login', function(req, res) {
+  var user = req.session.user;
+  var tag = req.query.tag;
+  var login = req.params.login;
+  var title = tag ? apostrophize(login) + tag + ' shelf' : apostrophize(login) + 'shelf';
+  var queryURL = tag ? '/_design/shelve/_view/by_user_login_and_tag' : '/_design/shelve/_view/by_user_login';
+  var opts = tag ? { startkey: [login, tag], endkey: [login, tag] } : { startkey: [login], endkey: [login] }
+  db.request(queryURL, opts, function(error, data) {
+    if (error && app.set('debug')) console.log(JSON.stringify(error));
+    if (error) req.flash('info', error.error + ': ' + error.reason);
+    res.render('shelf', {
+      locals: {
+        title: title,
+        login: login,
+        tag: tag,
+        repos: data.rows,
+        totalRepos: parseInt(data.rows.length)
+      }
+    });
   });
 });
 
