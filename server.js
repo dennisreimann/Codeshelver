@@ -227,7 +227,7 @@ app.get('/shelf.:format?', requireLogin, function(req, res) {
   });
 });
 
-app.get('/shelf/:login', function(req, res) {
+app.get('/shelf/:login.:format?', function(req, res) {
   var user = req.session.user;
   var tag = req.query.tag;
   var login = req.params.login;
@@ -236,16 +236,21 @@ app.get('/shelf/:login', function(req, res) {
   var opts = tag ? { startkey: [login, tag], endkey: [login, tag] } : { startkey: [login], endkey: [login] }
   db.request(queryURL, opts, function(error, data) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
-    if (error) req.flash('info', error.error + ': ' + error.reason);
-    res.render('shelf', {
-      locals: {
-        title: title,
-        login: login,
-        tag: tag,
-        repos: data.rows,
-        totalRepos: parseInt(data.rows.length)
-      }
-    });
+    if (req.params.format == 'js') {
+      res.contentType('javascript');
+      return res.send('Codeshelver.currentShelf = ' + (data ? JSON.stringify(data.rows) : null) + ';', {}, 200);
+    } else {
+      if (error) req.flash('info', error.error + ': ' + error.reason);
+      res.render('shelf', {
+        locals: {
+          title: title,
+          login: login,
+          tag: tag,
+          repos: data.rows,
+          totalRepos: parseInt(data.rows.length)
+        }
+      });
+    }
   });
 });
 
@@ -258,7 +263,7 @@ app.get('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
     if (req.params.format == 'js') {
       res.contentType('javascript');
-      return res.send('Codeshelver.currentRepo = ' + (doc ? JSON.stringify(doc) : null) + ';', {}, 200);
+      return res.send('Codeshelver.repos["' + owner + '/' + repo +  '"] = ' + (doc ? JSON.stringify(doc) : null) + ';', {}, 200);
     } else {
       var tags = doc ? doc.tags.join(" ") : '';
       if (req.session.buffer && req.session.buffer.tags) {

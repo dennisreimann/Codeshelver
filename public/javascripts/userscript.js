@@ -36,10 +36,6 @@ var Codeshelver = {
     self.addShelvedReposList();
     self.adjustRepoPage();
     self.observeButtons();
-    
-    if ($('#watched_repos').length) {
-      JavaScript.load(self.baseURL + '/shelf.js', function() { self.addShelvedReposList() });
-    }
   },
   
   // Include GitHub's jQuery (no extra load)
@@ -60,17 +56,15 @@ var Codeshelver = {
   },
   
   // Parsing GitHub URLs
-  getRepoPartsFromURL: function(url) {
+  repoIdForURL: function(url) {
     var parts = url.replace(this.urlRegex, '').split('/');
-    return parts;
+    var owner = parts[0];
+    var name = parts[1];
+    return owner + '/' + name;
   },
 
   shelveURLForRepoURL: function(url) {
-    var repoParts = this.getRepoPartsFromURL(url);
-    var repoOwner = repoParts[0];
-    var repoName = repoParts[1];
-    var shelveURL = this.baseURL + '/shelve/' + repoOwner + '/' + repoName;
-    return shelveURL;
+    return this.baseURL + '/shelve/' + this.repoIdForURL(url);
   },
   
   // Append shelve links to every repo news item
@@ -78,7 +72,9 @@ var Codeshelver = {
     var self = this;
     var addShelveButton = function(titleItem) {
       var repoURL = $(titleItem).find('a').last().attr('href');
-      var shelveLink = '<a class="button btn-shelve" href="' + self.shelveURLForRepoURL(repoURL) + '">shelve</a>';
+      var repoId = self.repoIdForURL(repoURL);
+      var shelveURL = self.shelveURLForRepoURL(repoURL);
+      var shelveLink = '<a class="button btn-shelve" data-repoid="' + repoId + '" href="' + shelveURL + '">shelve</a>';
       $(titleItem).append(shelveLink);
     };
     $('.news .push .title').each(function() { addShelveButton(this) });
@@ -87,6 +83,9 @@ var Codeshelver = {
     $('.news .issues_opened .title').each(function() { addShelveButton(this) });
     $('.news .issues_closed .title').each(function() { addShelveButton(this) });
     $('.news .fork .details .message').each(function() { addShelveButton(this) });
+    if ($('#watched_repos').length) {
+      JavaScript.load(self.baseURL + '/shelf.js', function() { self.addShelvedReposList() });
+    }
   },
   
   addShelveLink: function() {
@@ -137,16 +136,22 @@ var Codeshelver = {
   adjustRepoPage: function() {
     var self = this;
     $('.site ul.actions li.for-owner').each(function() {
+      var button = function(text) {
+        return '<span><span class="icon"></span> ' + text + '</span>';
+      };
       var buttonId = 'shelve_button';
       var repoURL = location.href;
-      var repoParts = self.getRepoPartsFromURL(repoURL);
-      var repoOwner = repoParts[0];
-      var repoName = repoParts[1];
+      var repoId = self.repoIdForURL(repoURL);
       var shelveURL = self.shelveURLForRepoURL(repoURL);
       var iconStyle = '<style type="text/css">.btn-shelve .icon{background:url(' + self.baseURL + '/images/minibutton_icons.png) no-repeat scroll 0 0 transparent;}.btn-shelve:hover .icon{background-position:0 -25px;}</style>';
-      var shelveItem = '<li><a id="' + buttonId + '" class="minibutton btn-watch btn-shelve" href="' + shelveURL + '"><span><span class="icon"></span> Shelve</span></a></li>';
+      var shelveItem = '<li><a class="minibutton btn-watch btn-shelve" id="' + buttonId + '" data-repoid="' + repoId + '" href="' + shelveURL + '">' + button('Shelve') + '</a></li>';
       $(this).after(shelveItem);
       $('body').append(iconStyle);
+      JavaScript.load(shelveURL + '.js', function() {
+        if (Codeshelver.repos[repoId]) {
+          $('#' + buttonId).html(button('Shelved'));
+        }
+      });
     });
   },
 
@@ -159,7 +164,7 @@ var Codeshelver = {
         shelver.remove();
       } else {
         var shelveURL = $(this).attr('href');
-        var shelfURL = shelveURL.replace(self.baseURL + "/shelve", self.baseURL + "/shelf"); // I admit, this is a little hackish…
+        var repoId = $(this).attr('data-repoid');
         var top = e.pageY + 10;
         var style = 'position:absolute;top:' + top + 'px;z-index:100000;opacity:1;';
         var shelveForm = 
@@ -169,19 +174,26 @@ var Codeshelver = {
           '<input type="text" id="shelve_tags" name="tags" /> ' +
           '<input type="submit" value="shelve" />' +
           '</p></form></div></div>';
-        $('body').append(shelveForm);
-        $('#' + id).css({left: (e.pageX - $('#' + id).width() / 2) + 'px'})
-        $('#shelve_tags').focus();
-        JavaScript.load(shelfURL + '.js', function() {
-          if (!Codeshelver.currentRepo) return;
-          var tags = Codeshelver.currentRepo.tags.join(" ");
+        var addTagsToShelveForm = function() {
+          var repo = Codeshelver.repos[repoId];
+          if (!repo) return;
+          var tags = repo.tags.join(" ");
           if (tags.length > 0) tags += " ";
           $('#shelve_tags').val(tags);
-        });
+        };
+        $('body').append(shelveForm);
+        $('#' + id).css({left: (e.pageX - $('#' + id).width() / 2) + 'px'})
+        if (typeof(Codeshelver.repos[repoId]) == "undefined") {
+          JavaScript.load(shelveURL + '.js', addTagsToShelveForm);
+        } else {
+          addTagsToShelveForm();
+        }
+        $('#shelve_tags').focus();
       }
       return false;
     });
   }
 };
 
+Codeshelver.repos = {};
 Codeshelver.init();
