@@ -20,7 +20,7 @@ var Codeshelver = {
   baseURL: "http://codeshelver.com",
   urlRegex: /https?:\/\/github.com\//,
   currentShelf: [],
-  
+
   init: function() {
     var self = this;
     // GreaseKit compatibility
@@ -34,14 +34,15 @@ var Codeshelver = {
     self.addShelveLink();
     self.addShelvedReposList();
     self.adjustRepoPage();
+    self.adjustUserPage();
     self.observeButtons();
   },
-  
+
   // Include GitHub's jQuery (no extra load)
   includeGitHubJquery: function() {
     $ = unsafeWindow.jQuery;
   },
-  
+
   // Parsing GitHub URLs
   repoIdForURL: function(url) {
     var parts = url.replace(this.urlRegex, '').split('/');
@@ -53,7 +54,7 @@ var Codeshelver = {
   shelveURLForRepoURL: function(url) {
     return this.baseURL + '/shelve/' + this.repoIdForURL(url);
   },
-  
+
   // Append shelve links to every repo news item
   adjustDashboard: function() {
     var self = this;
@@ -74,11 +75,11 @@ var Codeshelver = {
       JavaScript.load(self.baseURL + '/shelf.js', function() { self.addShelvedReposList() });
     }
   },
-  
+
   addShelveLink: function() {
     $('.topsearch .nav li:nth-child(2)').after('<li><a href="' + this.baseURL + '/shelf">Shelf</a></li>');
   },
-  
+
   addShelvedReposList: function() {
     if (!Codeshelver.currentShelf.length) return;
     var self = this;
@@ -118,14 +119,12 @@ var Codeshelver = {
       '</div>';
     $('#watched_repos').after(shelvedRepos);
   },
-  
+
   // Append shelve link on repo page
   adjustRepoPage: function() {
     var self = this;
     $('.site ul.actions li.for-owner').each(function() {
-      var button = function(text) {
-        return '<span><span class="icon"></span> ' + text + '</span>';
-      };
+      var button = function(text) { return '<span><span class="icon"></span> ' + text + '</span>'; };
       var buttonId = 'shelve_button';
       var repoURL = location.href;
       var repoId = self.repoIdForURL(repoURL);
@@ -140,6 +139,16 @@ var Codeshelver = {
         }
       });
     });
+  },
+
+  // Append shelf link on user page
+  adjustUserPage: function() {
+    if (!$('.userpage').length) return;
+    var self = this;
+    var parts = location.href.replace(this.urlRegex, '').split('/');
+    var login = parts[0];
+    var shelfURL = self.baseURL + '/shelf/' + login;
+    $('.userpage ul.actions').append('<li><a class="minibutton" href="' + shelfURL + '"><span>Shelf</span></a></li>');
   },
 
   observeButtons: function() {
