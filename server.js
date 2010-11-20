@@ -262,8 +262,14 @@ app.get('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
   db.getDoc(key, function(error, doc) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
     if (req.params.format == 'js') {
-      res.contentType('javascript');
-      return res.send('Codeshelver.repos["' + owner + '/' + repo +  '"] = ' + (doc ? JSON.stringify(doc) : null) + ';', {}, 200);
+      // load shelf count
+      db.request('/_design/repos/_view/popular', { startkey: [owner, repo], endkey: [owner, repo] }, function(error, data) {
+        if (error && app.set('debug')) console.log(JSON.stringify(error));
+        if (doc) doc.repo.shelfCount = data.rows[0].value;
+        // return the result
+        res.contentType('javascript');
+        return res.send('Codeshelver.repos["' + owner + '/' + repo +  '"] = ' + (doc ? JSON.stringify(doc) : null) + ';', {}, 200);
+      });
     } else {
       var tags = doc ? doc.tags.join(" ") : '';
       if (req.session.buffer && req.session.buffer.tags) {
