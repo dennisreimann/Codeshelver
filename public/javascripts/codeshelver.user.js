@@ -3,8 +3,6 @@
 // @description Cleans up your GitHub watchlist and gives you a place to remember repositories
 // @include     https://github.com/*
 // @include     http://github.com/*
-// @include     https://*.github.com/*
-// @include     http://*.github.com/*
 // @author      Codeshelver by Dennis Bloete (http://dennisbloete.de, http://codeshelver.com/)
 // ==/UserScript==
 
