@@ -19,7 +19,9 @@ var Codeshelver = {
   // Config
   baseURL: "http://codeshelver.com",
   urlRegex: /https?:\/\/github.com\//,
-  currentShelf: [],
+  shelf: [],
+  users: {},
+  repos: {},
 
   init: function() {
     var self = this;
@@ -81,14 +83,14 @@ var Codeshelver = {
   },
 
   addShelvedReposList: function() {
-    if (!Codeshelver.currentShelf.length) return;
+    if (!Codeshelver.shelf.length) return;
     var self = this;
     var shelfURL = this.baseURL + '/shelf';
     var maxCount = 10;
-    var shelfCount = Codeshelver.currentShelf.length;
+    var shelfCount = Codeshelver.shelf.length;
     var leftCount = shelfCount - maxCount;
     var repoList = '';
-    $.each(Codeshelver.currentShelf, function(i, item) {
+    $.each(Codeshelver.shelf, function(i, item) {
       if (i >= maxCount) return false;
       var repo = item.value.repo;
       repoList += '' +
@@ -198,8 +200,5 @@ var Codeshelver = {
     });
   }
 };
-
-Codeshelver.users = {};
-Codeshelver.repos = {};
 
 Codeshelver.init();
