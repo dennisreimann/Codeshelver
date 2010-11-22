@@ -135,15 +135,15 @@ var Codeshelver = {
         '<style type="text/css">' +
         '.btn-shelve .icon{background:url(' + self.baseURL + '/images/minibutton_icons.png) no-repeat scroll 0 0 transparent;}' +
         '.btn-shelve:hover .icon{background-position:0 -25px;}' +
-        'ul.repo-stats li.shelfs a { background-image:url(' + self.baseURL + '/images/repostat_shelfs.png); }'
+        'ul.repo-stats li.shelves a { background-image:url(' + self.baseURL + '/images/repostat_shelves.png); }'
         '</style>';
       var shelveItem = '<li><a class="minibutton btn-watch btn-shelve" id="' + buttonId + '" data-repoid="' + repoId + '" href="' + shelveURL + '">' + button('Shelve') + '</a></li>';
       var applyShelfData = function() {
         var shelfItem = Codeshelver.repos[repoId];
         if (!shelfItem) return;
         $('#' + buttonId).html(button('Shelved'));
-        $('.repo-stats').prepend('<li class="shelfs"><a class="tooltipped downwards" title="Shelfs" href="#">' + (shelfItem.repo.shelfCount || 0) + '</a></li>');
-        $('.repo-stats .shelfs a').tipsy();
+        $('.repo-stats').prepend('<li class="shelves"><a class="tooltipped downwards" title="Shelves" href="#">' + (shelfItem.repo.shelfCount || 0) + '</a></li>');
+        $('.repo-stats .shelves a').tipsy();
       };
       $(this).after(shelveItem);
       $('body').append(iconStyle);
