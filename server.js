@@ -16,6 +16,13 @@ var
   client = couchdb.createClient(5984, 'localhost'),
   db = client.db('codeshelver');
 
+
+// FIXME: Using the format parameter is just a workaround for the problem described here:
+// https://github.com/senchalabs/connect/issues#issue/83
+var repoNameFix = function(name, format) {
+  return format ? name + '.' + format : name;
+}
+
 // Helpers
 var apostrophize = function(s) {
   return s.charAt(s.length-1) == 's' ? s + "' " : s + "'s ";
@@ -209,7 +216,7 @@ app.get('/shelf.:format?', requireLogin, function(req, res) {
   var opts = tag ? { startkey: [user.id, tag], endkey: [user.id, tag] } : { startkey: [user.id], endkey: [user.id] }
   db.request(queryURL, opts, function(error, data) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
-    if (req.params.format == 'js') {
+    if (req.query.json) {
       res.contentType('javascript');
       return res.send('Codeshelver.shelf = ' + (data ? JSON.stringify(data.rows) : null) + ';', {}, 200);
     } else {
@@ -236,7 +243,7 @@ app.get('/shelf/:login.:format?', function(req, res) {
   var opts = tag ? { startkey: [login, tag], endkey: [login, tag] } : { startkey: [login], endkey: [login] }
   db.request(queryURL, opts, function(error, data) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
-    if (req.params.format == 'js') {
+    if (req.query.json) {
       res.contentType('javascript');
       return res.send('Codeshelver.users["' + login + '"] = ' + (data ? JSON.stringify(data.rows) : null) + ';', {}, 200);
     } else {
@@ -257,18 +264,22 @@ app.get('/shelf/:login.:format?', function(req, res) {
 app.get('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
   var user = req.session.user;
   var owner = req.params.owner;
-  var repo = req.params.repo;
+  var repo = repoNameFix(req.params.repo, req.params.format);
   var key = user.id + '-' + owner + '-' + repo;
   db.getDoc(key, function(error, doc) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
-    if (req.params.format == 'js') {
+    if (req.query.json) {
       // load shelf count
       db.request('/_design/repos/_view/popular', { startkey: [owner, repo], endkey: [owner, repo] }, function(error, data) {
         if (error && app.set('debug')) console.log(JSON.stringify(error));
-        if (doc) doc.repo.shelfCount = data.rows[0].value;
+        if (doc) {
+          doc.shelvesCount = data.rows[0].value;
+        } else {
+          doc = { shelvesCount: (data.rows[0] ? data.rows[0].value : 0) };
+        }
         // return the result
         res.contentType('javascript');
-        return res.send('Codeshelver.repos["' + owner + '/' + repo +  '"] = ' + (doc ? JSON.stringify(doc) : null) + ';', {}, 200);
+        return res.send('Codeshelver.repos["' + owner + '/' + repo +  '"] = ' + JSON.stringify(doc) + ';', {}, 200);
       });
     } else {
       var tags = doc ? doc.tags.join(" ") : '';
@@ -291,10 +302,7 @@ app.get('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
 app.post('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
   var user = req.session.user;
   var owner = req.params.owner;
-  var repo = req.params.repo;
-  // FIXME: Using the format parameter is just a workaround for the problem described here:
-  // https://github.com/senchalabs/connect/issues#issue/83
-  if (req.params.format) repo += ('.' + req.params.format);
+  var repo = repoNameFix(req.params.repo, req.params.format);
   var tags = req.body.tags ? req.body.tags.toLowerCase().trim().replace(/,/g, " ").split(/\s+/) : [];
   var repoURL = 'https://github.com/api/v2/json/repos/show/' + owner + '/' + repo;
   oauth.getProtectedResource(repoURL, user.accessToken, function(error, data, response) {
@@ -352,8 +360,7 @@ app.post('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
 app.del('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
   var user = req.session.user;
   var owner = req.params.owner;
-  var repo = req.params.repo;
-  if (req.params.format) repo += ('.' + req.params.format);
+  var repo = repoNameFix(req.params.repo, req.params.format);
   var key = user.id + '-' + owner + '-' + repo;
   db.getDoc(key, function(error, doc) {
     if (error) {
