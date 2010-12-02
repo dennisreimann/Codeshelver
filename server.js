@@ -272,10 +272,11 @@ app.get('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
       // load shelf count
       db.request('/_design/repos/_view/popular', { startkey: [owner, repo], endkey: [owner, repo] }, function(error, data) {
         if (error && app.set('debug')) console.log(JSON.stringify(error));
+        var count = data && data.rows[0] ? data.rows[0].value : 0;
         if (doc) {
-          doc.shelvesCount = data.rows[0].value;
+          doc.shelvesCount = count;
         } else {
-          doc = { shelvesCount: (data.rows[0] ? data.rows[0].value : 0) };
+          doc = { shelvesCount: count };
         }
         // return the result
         res.contentType('javascript');
