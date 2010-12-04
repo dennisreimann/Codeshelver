@@ -136,7 +136,7 @@ var Codeshelver = {
       var repoURL = location.href;
       var repoId = self.repoIdForURL(repoURL);
       var shelveURL = self.shelveURLForRepoURL(repoURL);
-      var shelvesURL = self.shelveURLForRepoURL(repoURL);
+      var shelvesURL = self.shelvesURLForRepoURL(repoURL);
       var iconStyle = '' +
         '<style type="text/css">' +
         '.btn-shelve .icon{background:url(' + self.baseURL + '/images/minibutton_icons.png) no-repeat scroll 0 0 transparent;}' +
