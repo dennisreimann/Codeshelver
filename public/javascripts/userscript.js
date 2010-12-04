@@ -57,6 +57,10 @@ var Codeshelver = {
   shelveURLForRepoURL: function(url) {
     return this.baseURL + '/shelve/' + this.repoIdForURL(url);
   },
+  
+  shelvesURLForRepoURL: function(url) {
+    return this.baseURL + '/shelves/' + this.repoIdForURL(url);
+  },
 
   // Append shelve links to every repo news item
   adjustDashboard: function() {
@@ -132,6 +136,7 @@ var Codeshelver = {
       var repoURL = location.href;
       var repoId = self.repoIdForURL(repoURL);
       var shelveURL = self.shelveURLForRepoURL(repoURL);
+      var shelvesURL = self.shelveURLForRepoURL(repoURL);
       var iconStyle = '' +
         '<style type="text/css">' +
         '.btn-shelve .icon{background:url(' + self.baseURL + '/images/minibutton_icons.png) no-repeat scroll 0 0 transparent;}' +
@@ -142,7 +147,7 @@ var Codeshelver = {
       var applyShelfData = function() {
         var shelfItem = Codeshelver.repos[repoId];
         if (shelfItem.repo) $('#' + buttonId).html(button('Shelved'));
-        $('.repo-stats').prepend('<li class="shelves"><a class="tooltipped downwards" title="Shelves" href="#">' + shelfItem.shelvesCount + '</a></li>');
+        $('.repo-stats').prepend('<li class="shelves"><a class="tooltipped downwards" title="Shelves" href="' + shelvesURL + '">' + shelfItem.shelvesCount + '</a></li>');
         $('.repo-stats .shelves a').tipsy();
       };
       $(this).after(shelveItem);

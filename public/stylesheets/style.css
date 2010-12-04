@@ -112,41 +112,41 @@ ul#twitter_update_list li {
 ul#twitter_update_list li:first-child {
   border-top: none;}
 
-ul#repos {
+ul.items {
   list-style: none;
   margin: 0 0 1.25em 0;
   padding: 0;
   border: 1px solid #CCC;
   -moz-border-radius: .5em;
   -webkit-border-radius: .5em;}
-ul#repos li {
+ul.items li {
   position: relative;
   overflow: hidden;
   border-top: 1px solid #CCC;
   padding: .5em .75em;}
-ul#repos li:first-child {
+ul.items li:first-child {
   border-top: none;}
-ul#repos li .entry {
+ul.items li .entry {
   float: left;}
-ul#repos li .entry .count {
+ul.items li .entry .count {
   position: absolute;
   bottom: 0;
   right: 2.125em;
   color: #DDD;
   font-size: 2em;}
-ul#repos li .tags {
+ul.items li .tags {
   font-size: .8em;}
-ul#repos li .tags a {
+ul.items li .tags a {
   color: #777;
   margin-right: .25em;}
-ul#repos li .description {
+ul.items li .description {
   clear: both;
   margin-top: .5em;
   font-size: .7em;}
-ul#repos li .options {
+ul.items li .options {
   float: right;
   margin-left: 1em;}
-ul#repos li .options form {
+ul.items li .options form {
   float: left;
   margin-left: .5em;}
 

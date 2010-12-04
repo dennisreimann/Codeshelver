@@ -41,9 +41,9 @@ app.dynamicHelpers({
 app.helpers({
   apostrophize: apostrophize,
   linkTo: function(text, url) { return '<a href=' + url + '>' + text + '</a>'; },
-  linkRepo: function(owner, name) {
-    var text = owner + '/' + name;
-    var url = 'http://github.com/' + owner + '/' + name;
+  linkRepo: function(owner, name, text) {
+    var url = 'https://github.com/' + owner + '/' + name;
+    if (!text) text = owner + '/' + name;
     return '<a href=' + url + '>' + text + '</a>';
   }
 });
@@ -258,6 +258,24 @@ app.get('/shelf/:login.:format?', function(req, res) {
         }
       });
     }
+  });
+});
+
+app.get('/shelves/:owner/:repo.:format?', function(req, res) {
+  var owner = req.params.owner;
+  var repo = repoNameFix(req.params.repo, req.params.format);
+  db.request('/_design/repos/_view/users', { startkey: [owner, repo], endkey: [owner, repo] }, function(error, data) {
+    if (error && app.set('debug')) console.log(JSON.stringify(error));
+    if (error) req.flash('info', error.error + ': ' + error.reason);
+    res.render('shelves', {
+      locals: {
+        title: 'Shelves with ' + owner + '/' + repo,
+        owner: owner,
+        repo: repo,
+        shelves: data.rows,
+        totalShelves: parseInt(data.rows.length)
+      }
+    });
   });
 });
 

@@ -19,14 +19,14 @@ p
         = tag.key
       | 
 
-ul#repos
+ul#repos.items
   - each repo in repos
     - owner = repo.key[tag ? 1 : 0]
     - name = repo.key[tag ? 2 : 1]
     li
       .entry
         strong #{linkRepo(owner, name)}
-        .count= repo.value
+        .count #{linkTo(repo.value, '/shelves/' + owner + '/' + name)}
       .options
         form(method='get', action='/shelve/' + owner + '/' + name)
           button.edit(type='submit') shelve

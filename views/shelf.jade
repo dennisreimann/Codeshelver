@@ -22,7 +22,7 @@
     | shelf contains #{totalRepos} repositor#{totalRepos == 1 ? 'y' : 'ies'}
     - if (tag)
       | tagged with #{em= tag}.
-  ul#repos
+  ul#repos.items
     - each repo in repos
       li
         .entry

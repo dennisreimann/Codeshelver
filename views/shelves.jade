@@ -1,0 +1,28 @@
+.header
+  h1= title
+
+- if (totalShelves == 0)
+  p
+    | This repository is not shelved, yet.
+    br
+    | Maybe you'd like to #{linkTo('shelve it', '/shelve/' + owner + '/' + repo)}?
+
+- if (totalShelves > 0)
+  p
+    | This repository is shelved by #{totalShelves} #{totalShelves == 1 ? 'person' : 'people'}.
+    | Want to #{linkTo('shelve it', '/shelve/' + owner + '/' + repo)}, too?
+  ul#shelves.items
+    - each shelf in shelves
+      li
+        .entry
+          strong #{linkTo(shelf.value.user.login, '/shelf/' + shelf.value.user.login)}
+          - if (shelf.value.tags.length)
+            .tags
+              - each tag in shelf.value.tags
+                #{linkTo(tag, '/shelf/' + shelf.value.user.login + '?tag=' + tag)}
+        .options
+          form(method='get', action='https://github.com/' + shelf.value.user.login)
+            button.edit(type='submit') github
+
+  p
+    | View this repository on #{linkRepo(owner, repo, 'GitHub')}.

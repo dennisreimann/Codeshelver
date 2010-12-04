@@ -46,6 +46,9 @@ begin
           :popular_tagged => {
             :map => "function(doc) { for(var i in doc.tags) { emit([doc.tags[i], doc.repo.owner, doc.repo.name], 1); } }",
             :reduce => "function (key, values, rereduce) { return sum(values); }"
+          },
+          :users => {
+            :map => "function(doc) { emit([doc.repo.owner, doc.repo.name], doc); }"
           }
         }
       })
