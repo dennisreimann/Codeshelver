@@ -19,7 +19,7 @@ var JavaScript = {
 var Codeshelver = {
   // Config
   baseURL: "http://codeshelver.com",
-  urlRegex: /https?:\/\/github.com\//,
+  urlRegex: /^(https?:\/\/github.com)?\//,
   shelf: [],
   users: {},
   repos: {},
