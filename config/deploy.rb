@@ -29,7 +29,7 @@
 
 set :user, "deploy"
 set :application, "codeshelver"
-set :domain, "www.innovated.de"
+set :domain, "innovated.de"
 set :deploy_to, "/var/www/#{application}"
 set :repository, "git@git.innovated.de:#{application}.git"
 set :symlinks, { 'config/app.js' => 'config/app.js' }
