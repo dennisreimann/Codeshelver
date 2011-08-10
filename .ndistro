@@ -1,8 +1,9 @@
-module visionmedia express
-module visionmedia expresso
-module visionmedia jade
-module visionmedia sass.js
-module senchalabs connect
-module ciaranj connect-auth
-module ciaranj node-oauth
-module felixge node-couchdb
+node 0.2.3
+module visionmedia express 1.0.0rc4
+module visionmedia expresso 0.6.4
+module visionmedia jade 0.5.5
+module visionmedia sass.js 0.5.0
+module senchalabs connect 0.3.0
+module ciaranj connect-auth 0.2.1
+module ciaranj node-oauth 0.8.2
+module felixge node-couchdb 1.0.0
