@@ -130,7 +130,8 @@ var Codeshelver = {
   // Append shelve link on repo page
   adjustRepoPage: function() {
     var self = this;
-    $('.site ul.actions li.for-owner').each(function() {
+
+    $('.site ul.actions li').has('a.btn-watch').each(function() {
       var button = function(text) { return '<span><span class="icon"></span> ' + text + '</span>'; };
       var buttonId = 'shelve_button';
       var repoURL = location.href;
@@ -150,7 +151,7 @@ var Codeshelver = {
         $('.repo-stats').prepend('<li class="shelves"><a class="tooltipped downwards" title="Shelves" href="' + shelvesURL + '">' + shelfItem.shelvesCount + '</a></li>');
         $('.repo-stats .shelves a').tipsy();
       };
-      $(this).after(shelveItem);
+      $(this).before(shelveItem);
       $('body').append(iconStyle);
       typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '?json=1', applyShelfData) : applyShelfData();
     });
