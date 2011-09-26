@@ -18,7 +18,7 @@ var JavaScript = {
 // Here goes the real userscript
 var Codeshelver = {
   // Config
-  baseURL: "http://codeshelver.com",
+  baseURL: "https://www.codeshelver.com",
   urlRegex: /^(https?:\/\/github.com)?\//,
   shelf: [],
   users: {},
@@ -57,7 +57,7 @@ var Codeshelver = {
   shelveURLForRepoURL: function(url) {
     return this.baseURL + '/shelve/' + this.repoIdForURL(url);
   },
-  
+
   shelvesURLForRepoURL: function(url) {
     return this.baseURL + '/shelves/' + this.repoIdForURL(url);
   },
@@ -119,7 +119,7 @@ var Codeshelver = {
       '   ' + repoList +
       ' </ul>' +
       ' <div class="bottom-bar">' +
-      '   <a href="' + shelfURL + '" class="show-more" id="inline_shelved_repos">Show ' + 
+      '   <a href="' + shelfURL + '" class="show-more" id="inline_shelved_repos">Show ' +
       '   ' + (leftCount > 0 ? leftCount : '') +
       '   more repositories&hellip;</a>' +
       ' </div>' +
@@ -185,7 +185,7 @@ var Codeshelver = {
         var repoId = $(this).attr('data-repoid');
         var top = e.pageY + 10;
         var style = 'position:absolute;top:' + top + 'px;z-index:100000;opacity:1;';
-        var shelveForm = 
+        var shelveForm =
           '<div id="' + id + '" style="' + style + '" class="tipsy tipsy-north"><div class="tipsy-inner">' +
           '<form method="post" action="' + shelveURL + '">' +
           '<p style="margin:.35em .25em;"><label for="shelve_tags">Tags:</label> ' +

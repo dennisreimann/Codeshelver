@@ -9,7 +9,7 @@ var
   OAuth2 = require('node-oauth').OAuth2,
   auth = require('index'),
   couchdb = require('node-couchdb');
-  
+
 var
   app = module.exports = express.createServer(),
   pubDir = __dirname + '/public',
@@ -97,7 +97,7 @@ app.configure('development', function() {
 });
 
 app.configure('production', function() {
-  app.set('baseURL', 'http://codeshelver.com');
+  app.set('baseURL', 'https://www.codeshelver.com');
 });
 
 // Middleware - take care, the order of these matters!
@@ -118,7 +118,7 @@ app.use(auth([auth.Github({
 // GitHub OAuth 2.0, see: http://github.com/account/applications
 var oauth = new OAuth2(config[app.set('env')].oauth.clientId, config[app.set('env')].oauth.secret,
   app.set('oauth baseURL'), app.set('oauth authorizePath'), app.set('oauth accessTokenPath'));
-  
+
 app.get('/signin', function(req, res) {
   req.authenticate(['github'], function(error, authenticated) {});
 });
@@ -361,7 +361,7 @@ app.post('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
             req.flash('info', 'Could not shelve the repository: ' + error.reason);
             req.session.buffer = { tags: tags };
             res.redirect('/shelve/' + owner + '/' + repo);
-          } else {  
+          } else {
             // Redirect back or default to repository
             var returnTo = req.back ? req.back : 'http://github.com/' + owner + '/' + repo;
             req.flash('info', 'You ' + (newDoc ? 'shelved' : 'updated') + ' ' + owner + '/' + repo);

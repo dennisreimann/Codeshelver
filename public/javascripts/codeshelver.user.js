@@ -3,7 +3,7 @@
 // @description Cleans up your GitHub watchlist and gives you a place to remember repositories
 // @include     https://github.com/*
 // @include     http://github.com/*
-// @author      Codeshelver by Dennis Bloete (http://dennisbloete.de, http://codeshelver.com/)
+// @author      Codeshelver by Dennis Bloete (http://dennisbloete.de, https://www.codeshelver.com/)
 // ==/UserScript==
 
 (function() {
@@ -12,7 +12,7 @@
   // added or GitHub changes something (like their markup). Also 
   // disables the buttons in case codeshelver.com is not available.
   var script = document.createElement('script');
-  script.src = 'http://codeshelver.com/javascripts/userscript.js';
+  script.src = 'https://www.codeshelver.com/javascripts/userscript.js';
   script.type = 'text/javascript';
   document.getElementsByTagName('head')[0].appendChild(script);
 })();
