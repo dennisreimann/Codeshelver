@@ -131,7 +131,7 @@ var Codeshelver = {
   adjustRepoPage: function() {
     var self = this;
 
-    $('.site ul.actions li').has('a.btn-watch').each(function() {
+    $('.site ul.pagehead-actions li').has('a.btn-watch').each(function() {
       var button = function(text) { return '<span><span class="icon"></span> ' + text + '</span>'; };
       var buttonId = 'shelve_button';
       var repoURL = location.href;
