@@ -201,7 +201,8 @@ var Codeshelver = {
           $('#shelve_tags').focus();
         };
         $('body').append(shelveForm);
-        $('#' + id).css({left: (e.pageX - $('#' + id).width() / 2) + 'px'})
+        $('#' + id).css({left: (e.pageX - $('#' + id).width() / 2) + 'px'});
+        $('#shelve_tags').focus();
         typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '?json=1', addTagsToShelveForm) : addTagsToShelveForm();
       }
       return false;
