@@ -177,9 +177,10 @@ var Codeshelver = {
     var self = this;
     $('a.btn-shelve').live('click', function(e) {
       var id = 'shelver';
-      var shelver = $('#' + id);
-      if (shelver.length) {
-        shelver.remove();
+      var $shelver = $('#' + id);
+      var closeShelver = function() { $shelver.remove(); };
+      if ($shelver.length) {
+        closeShelver();
       } else {
         var shelveURL = $(this).attr('href');
         var repoId = $(this).attr('data-repoid');
@@ -198,11 +199,14 @@ var Codeshelver = {
           var tags = shelfItem.tags.join(" ");
           if (tags.length > 0) tags += " ";
           $('#shelve_tags').val(tags);
-          $('#shelve_tags').focus();
+          $('#shelve_tags').focus().keyup(function(e) {
+            if (e.keyCode == 13) { $shelver.find('form').submit(); }   // Enter
+            if (e.keyCode == 27) { closeShelver() } // Escape
+          });
         };
         $('body').append(shelveForm);
-        $('#' + id).css({left: (e.pageX - $('#' + id).width() / 2) + 'px'});
-        $('#shelve_tags').focus();
+        $shelver = $('#' + id)
+        $shelver.css({left: (e.pageX - $shelver.width() / 2) + 'px'});
         typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '?json=1', addTagsToShelveForm) : addTagsToShelveForm();
       }
       return false;
