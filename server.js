@@ -363,7 +363,7 @@ app.post('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
             res.redirect('/shelve/' + owner + '/' + repo);
           } else {
             // Redirect back or default to repository
-            var returnTo = req.back ? req.back : 'http://github.com/' + owner + '/' + repo;
+            var returnTo = req.back ? req.back : 'https://github.com/' + owner + '/' + repo;
             req.flash('info', 'You ' + (newDoc ? 'shelved' : 'updated') + ' ' + owner + '/' + repo);
             res.redirect(returnTo);
           }
