@@ -207,6 +207,7 @@ var Codeshelver = {
         $('body').append(shelveForm);
         $shelver = $('#' + id)
         $shelver.css({left: (e.pageX - $shelver.width() / 2) + 'px'});
+        $('#shelve_tags').focus();
         typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '?json=1', addTagsToShelveForm) : addTagsToShelveForm();
       }
       return false;
