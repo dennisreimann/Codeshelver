@@ -18,7 +18,7 @@ var
 // FIXME: Using the format parameter is just a workaround for the problem described here:
 // https://github.com/senchalabs/connect/issues#issue/83
 var repoNameFix = function(name, format) {
-  return format ? name + '.' + format : name;
+  return format && format != 'json' ? name + '.' + format : name;
 }
 
 // Helpers
@@ -313,7 +313,7 @@ app.get('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
   });
 });
 
-app.post('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
+app.post('/shelve/:owner/:repo', requireLogin, function(req, res) {
   var user = req.session.user;
   var owner = req.params.owner;
   var repo = repoNameFix(req.params.repo, req.params.format);
