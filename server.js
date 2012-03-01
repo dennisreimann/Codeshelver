@@ -318,11 +318,11 @@ app.post('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
   var owner = req.params.owner;
   var repo = repoNameFix(req.params.repo, req.params.format);
   var tags = req.body.tags ? req.body.tags.toLowerCase().trim().replace(/,/g, " ").split(/\s+/) : [];
-  var repoURL = 'https://github.com/api/v2/json/repos/show/' + owner + '/' + repo;
-  oauth.getProtectedResource(repoURL, user.accessToken, function(error, data, response) {
+  var repoURL = 'http://github.com/api/v2/json/repos/show/' + owner + '/' + repo;
+  oauth.get(repoURL, user.accessToken, function(error, data, response) {
     // Hande errors
     if (error) {
-      if (app.set('debug')) console.log('Retrieving repository data failed: ' + error);
+      if (app.set('debug')) console.log('Retrieving repository data failed: ' + error.data);
     } else {
       try {
         var repository = JSON.parse(data).repository;
