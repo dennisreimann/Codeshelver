@@ -1,0 +1,9 @@
+{ "name" : "codeshelver"
+, "version" : "0.5.0"
+, "dependencies" : {
+    "express" : "2.x.x"
+  , "jade" : "0.20.x"
+  , "sass" : "0.5.x"
+  , "connect" : "2.0.x"
+  , "connect-auth" : "0.5.x"
+  , "felix-couchdb" : "1.0.x" } }

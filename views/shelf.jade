@@ -4,7 +4,6 @@
     form#filter(method='get')
       div
         input(type='text', id='filter_tag', name='tag', value=tag)
-        | 
         button(type='submit') filter by tag
 
 - if (totalRepos == 0)
@@ -14,7 +13,7 @@
     - if (!tag)
       | You have not shelved any repositories, yet.
     br
-    | Go to #{linkTo('GitHub', 'http://github.com')} and find some interesting repos :)
+    | Go to !{linkTo('GitHub', 'http://github.com')} and find some interesting repos :)
 
 - if (totalRepos > 0)
   p
@@ -26,11 +25,11 @@
     - each repo in repos
       li
         .entry
-          strong #{linkRepo(repo.value.repo.owner, repo.value.repo.name)}
+          strong !{linkRepo(repo.value.repo.owner, repo.value.repo.name)}
           - if (repo.value.tags.length)
             .tags
               - each tag in repo.value.tags
-                #{linkTo(tag, '?tag=' + tag)}
+                !{linkTo(tag, '?tag=' + tag)}
         .options
           form(method='get', action='/shelve/' + repo.value.repo.owner + '/' + repo.value.repo.name)
             button.edit(type='submit') edit
@@ -40,4 +39,4 @@
   p
     | You reached the end of your shelf!
     br
-    | Now go to #{linkTo('GitHub', 'http://github.com')} and find some more repos :)
+    | Now go to !{linkTo('GitHub', 'http://github.com')} and find some more repos :)

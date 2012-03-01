@@ -1,21 +1,19 @@
-require.paths.unshift(__dirname + '/lib/node/');
-
 var
   config = require(__dirname + '/config/app.js');
   connect = require('connect'),
-  utils = require('utils'),
+  utils = require('util'),
   session = require('connect/middleware/session'),
   express = require('express'),
-  OAuth2 = require('node-oauth').OAuth2,
-  auth = require('index'),
-  couchdb = require('node-couchdb');
+  OAuth2 = require('oauth').OAuth2,
+  auth = require('connect-auth'),
+  couchdb = require('felix-couchdb'),
+  jade = require('jade');
 
 var
   app = module.exports = express.createServer(),
   pubDir = __dirname + '/public',
   client = couchdb.createClient(5984, 'localhost'),
   db = client.db('codeshelver');
-
 
 // FIXME: Using the format parameter is just a workaround for the problem described here:
 // https://github.com/senchalabs/connect/issues#issue/83
@@ -49,7 +47,7 @@ app.helpers({
 });
 
 // Authentication middleware
-var signinFromCookie = function(req, res) {
+var signinFromCookie = function(req, res, next) {
   var userCookie = req.cookies.user;
   if (userCookie) {
     try {
@@ -58,17 +56,12 @@ var signinFromCookie = function(req, res) {
       res.clearCookie('user');
     }
   }
-  return req.session.user;
+  next();
 }
 
 var requireLogin = function(req, res, next) {
   var user = req.session.user;
   if (!user) {
-    if (app.set('debug')) console.log("Not signed in by session");
-    user = signinFromCookie(req, res);
-  }
-  if (!user) {
-    if (app.set('debug')) console.log("Not signed in by cookie");
     // Buffer the request and authenticate
     var tags = req.body && req.body.tags ? req.body.tags : null;
     req.session.buffer = { returnURL: req.url, tags: tags };
@@ -104,16 +97,17 @@ app.configure('production', function() {
 app.use(express.favicon(pubDir + '/favicon.ico'));
 app.use(express.compiler({ src: pubDir, enable: ['sass'] }));
 app.use(express.logger({ format: ':method :url :response-time' }));
-app.use(express.bodyDecoder());
-app.use(express.staticProvider(pubDir));
+app.use(express.bodyParser());
+app.use(express.static(pubDir));
 app.use(express.methodOverride());
-app.use(express.cookieDecoder());
-app.use(express.session());
+app.use(express.cookieParser());
+app.use(express.session({ secret: config[app.set('env')].sessionKey, cookie: { secure: true }}));
 app.use(auth([auth.Github({
   appId: config[app.set('env')].oauth.clientId,
   appSecret: config[app.set('env')].oauth.secret,
   callback: app.set('baseURL') + app.set('oauth callbackPath')
 })]));
+app.use(signinFromCookie);
 
 // GitHub OAuth 2.0, see: http://github.com/account/applications
 var oauth = new OAuth2(config[app.set('env')].oauth.clientId, config[app.set('env')].oauth.secret,
@@ -211,12 +205,13 @@ app.get('/popular', function(req, res) {
 app.get('/shelf.:format?', requireLogin, function(req, res) {
   var user = req.session.user;
   var tag = req.query.tag;
+  console.log(req.params.format)
   var title = tag ? 'Your ' + tag + ' shelf' : 'Your shelf';
   var queryURL = tag ? '/_design/shelve/_view/by_user_id_and_tag' : '/_design/shelve/_view/by_user_id';
   var opts = tag ? { startkey: [user.id, tag], endkey: [user.id, tag] } : { startkey: [user.id], endkey: [user.id] }
   db.request(queryURL, opts, function(error, data) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
-    if (req.query.json) {
+    if (req.is('json') || req.params.format == 'json') {
       res.contentType('javascript');
       return res.send('Codeshelver.shelf = ' + (data ? JSON.stringify(data.rows) : null) + ';', {}, 200);
     } else {
@@ -243,7 +238,7 @@ app.get('/shelf/:login.:format?', function(req, res) {
   var opts = tag ? { startkey: [login, tag], endkey: [login, tag] } : { startkey: [login], endkey: [login] }
   db.request(queryURL, opts, function(error, data) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
-    if (req.query.json) {
+    if (req.is('json') || req.params.format == 'json') {
       res.contentType('javascript');
       return res.send('Codeshelver.users["' + login + '"] = ' + (data ? JSON.stringify(data.rows) : null) + ';', {}, 200);
     } else {
@@ -286,7 +281,7 @@ app.get('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
   var key = user.id + '-' + owner + '-' + repo;
   db.getDoc(key, function(error, doc) {
     if (error && app.set('debug')) console.log(JSON.stringify(error));
-    if (req.query.json) {
+    if (req.is('json') || req.params.format == 'json') {
       // load shelf count
       db.request('/_design/repos/_view/popular', { startkey: [owner, repo], endkey: [owner, repo] }, function(error, data) {
         if (error && app.set('debug')) console.log(JSON.stringify(error));
@@ -401,7 +396,7 @@ app.del('/shelve/:owner/:repo.:format?', requireLogin, function(req, res) {
 
 // Error handling
 app.error(function(err, req, res, next) {
-  if (app.set('env') != 'production') next(err);
+  if (app.set('env') != 'production') return next(err);
   res.render('error.jade', {
     locals: {
       title: 'An error occurred',

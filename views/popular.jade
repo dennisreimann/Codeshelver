@@ -14,10 +14,7 @@ p
     - minFontSize = 12
     - maxFontSize = 22
     - each tag in tags
-      a(href='?tag=' + tag.key, title=tag.value + ' repositories', style='font-size:' +
-        ((((tag.value - minTagCount) * (maxFontSize - minFontSize)) / (maxTagCount - minTagCount) ) + minFontSize) + 'pt')
-        = tag.key
-      | 
+      | <a href="?tag=#{tag.key}" title="#{tag.value} repositories" style="font-size:#{((((tag.value - minTagCount) * (maxFontSize - minFontSize)) / (maxTagCount - minTagCount) ) + minFontSize)}pt">#{tag.key}</a>
 
 ul#repos.items
   - each repo in repos
@@ -25,10 +22,10 @@ ul#repos.items
     - name = repo.key[tag ? 2 : 1]
     li
       .entry
-        strong #{linkRepo(owner, name)}
-        .count #{linkTo(repo.value, '/shelves/' + owner + '/' + name)}
+        strong !{linkRepo(owner, name)}
+        .count !{linkTo(repo.value, '/shelves/' + owner + '/' + name)}
       .options
         form(method='get', action='/shelve/' + owner + '/' + name)
           button.edit(type='submit') shelve
 p
-  | Besides these there are also some more #{linkTo('interesting repos', 'http://github.com/repositories')} :)
+  | Besides these there are also some more !{linkTo('interesting repos', 'http://github.com/repositories')} :)

@@ -3,7 +3,7 @@ html(lang="en")
   head
     title= title
     meta(charset='utf-8')
-    meta(name='google-site-verification' content='kLb2b2CSGM8Baq8iVSthE5VzhRsUWNDYfVM6mLVsvH8')
+    meta(name='google-site-verification', content='kLb2b2CSGM8Baq8iVSthE5VzhRsUWNDYfVM6mLVsvH8')
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js', type='text/javascript')
     script(src='/javascripts/application.js', type='text/javascript')
@@ -17,22 +17,22 @@ html(lang="en")
           img.avatar(src='http://www.gravatar.com/avatar/' + user.gravatar + '?size=50&d=http%3A%2F%2Fcodeshelver.com%2Fimages%2Fdefault_gravatar.png')
           .welcome Hello #{user.login}!
           .nav
-            #{linkTo('Your shelf', '/shelf')}
-            #{linkTo('Popular repos', '/popular')}
-            #{linkTo('Sign out', '/signout')}
+            !{linkTo('Your shelf', '/shelf')}
+            !{linkTo('Popular repos', '/popular')}
+            !{linkTo('Sign out', '/signout')}
         - else
           img.avatar(src='/images/default_gravatar.png')
           .welcome Hey there! Wanna try Codeshelver?
           .nav
-            #{linkTo('Sign in via GitHub OAuth', '/signin')}
-            #{linkTo('Popular repos', '/popular')}
+            !{linkTo('Sign in via GitHub OAuth', '/signin')}
+            !{linkTo('Popular repos', '/popular')}
       #main
         #{messages}
         != body
       #foot
         a(href='http://dennisbloete.de/blog/codeshelver-tag-github-repositories/', class='FlattrButton', rev='flattr;button:compact;')
         | Support Codeshelver by giving it some Flattr love!
-    :javascript
+    script(type='text/javascript')
       | var _gaq = _gaq || [];
       | _gaq.push(['_setAccount', 'UA-376258-18']);
       | _gaq.push(['_gat._anonymizeIp']);
