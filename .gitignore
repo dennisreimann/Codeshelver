@@ -1,8 +1,5 @@
 .bundle
 .DS_Store
 .rvmrc
-bin
 config/app.js
-lib
-log
-modules
+log/**
