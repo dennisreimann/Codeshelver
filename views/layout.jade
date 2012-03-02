@@ -10,11 +10,11 @@ html(lang="en")
   body
     #ribbon
       a(href='https://github.com/dbloete/Codeshelver')
-        img(src='http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png', alt='Fork me on GitHub')
+        img(src='https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png', alt='Fork me on GitHub')
     #wrap
       #head
         - if (user)
-          img.avatar(src='http://www.gravatar.com/avatar/' + user.gravatar + '?size=50&d=http%3A%2F%2Fcodeshelver.com%2Fimages%2Fdefault_gravatar.png')
+          img.avatar(src='https://www.gravatar.com/avatar/' + user.gravatar + '?size=50&d=http%3A%2F%2Fcodeshelver.com%2Fimages%2Fdefault_gravatar.png')
           .welcome Hello #{user.login}!
           .nav
             !{linkTo('Your shelf', '/shelf')}
