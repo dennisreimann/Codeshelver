@@ -4,6 +4,7 @@
     "express" : "2.x.x"
   , "jade" : "0.20.x"
   , "sass" : "0.5.x"
+  , "oauth" : "0.9.x"
   , "connect" : "2.0.x"
   , "connect-auth" : "0.5.x"
   , "felix-couchdb" : "1.0.x" } }

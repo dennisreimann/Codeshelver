@@ -2,7 +2,6 @@ var
   config = require(__dirname + '/config/app.js');
   connect = require('connect'),
   utils = require('util'),
-  session = require('connect/middleware/session'),
   express = require('express'),
   OAuth2 = require('oauth').OAuth2,
   auth = require('connect-auth'),
