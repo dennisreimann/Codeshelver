@@ -1,9 +1,21 @@
 set :user, "deploy"
 set :application, "codeshelver"
-set :domain, "codeshelver.com"
+set :domain, "innovated.de"
 set :deploy_to, "/var/www/#{application}"
 set :repository, "git@git.innovated.de:#{application}.git"
+set :copy_shared, { 'config/app.js' => 'config/app.js' }
 set :symlinks, { 'config/app.js' => 'config/app.js' }
+set :revision, "origin/master"
+set :skip_scm, false
+set :mkdirs, %w(tmp)
+set :shared_paths, { 'log' => 'log' }
+set :deploy_tasks, %w(
+  vlad:update
+  vlad:symlink
+  vlad:bundle:install
+  vlad:restart_app
+  vlad:cleanup
+)
 
 require 'bundler/vlad'
 
@@ -24,10 +36,4 @@ namespace :vlad do
     %w(stop_app start_app).each { |task| Rake::Task["vlad:#{task}"].invoke }
   end
 
-  desc 'Full deployment cycle'
-  remote_task :deploy, :roles => :app do
-    %w(update symlink ndistro:install_deps bundle:install restart_app cleanup).each do |task|
-      Rake::Task["vlad:#{task}"].invoke
-    end
-  end
 end

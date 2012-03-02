@@ -5,7 +5,7 @@ gem "json"
 gem "couchrest"
 
 group :development do
-  gem "vlad"
-  gem "vlad-git"
-  gem "vlad-extras"
+  gem 'vlad', :require => false
+  gem 'vlad-git', :require => false
+  gem 'vlad-extras', :require => false
 end

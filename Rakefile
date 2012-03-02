@@ -4,7 +4,7 @@ require "bundler/setup"
 begin
   require 'vlad'
   require 'vlad-extras'
-  Vlad.load(:app => nil, :type => :nodejs, :scm => :git, :web => :nginx)
+  Vlad.load(:app => nil, :type => nil, :scm => :git, :web => :nginx)
 rescue LoadError
   puts "Could not load Vlad - please run 'bundle install'"
 end
