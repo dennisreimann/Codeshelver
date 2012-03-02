@@ -79,7 +79,7 @@ var Codeshelver = {
     $('.news .issues_closed .title').each(function() { addShelveButton(this) });
     $('.news .fork .details .message').each(function() { addShelveButton(this) });
     if ($('#watched_repos').length) {
-      JavaScript.load(self.baseURL + '/shelf?json=1', function() { self.addShelvedReposList() });
+      JavaScript.load(self.baseURL + '/shelf.json', function() { self.addShelvedReposList() });
     }
   },
 
@@ -153,7 +153,7 @@ var Codeshelver = {
       };
       $(this).before(shelveItem);
       $('body').append(iconStyle);
-      typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '?json=1', applyShelfData) : applyShelfData();
+      typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '.json', applyShelfData) : applyShelfData();
     });
   },
 
@@ -170,7 +170,7 @@ var Codeshelver = {
       $('ul.stats').append('<li><a href="' + shelfURL + '"><strong>' + user.length + '</strong><span>shelved repos</span></a></li>');
     };
     $('.userpage ul.actions').append('<li><a class="minibutton" href="' + shelfURL + '"><span>Shelf</span></a></li>');
-    typeof(Codeshelver.users[login]) == "undefined" ? JavaScript.load(shelfURL + '?json=1', applyUserData) : applyUserData();
+    typeof(Codeshelver.users[login]) == "undefined" ? JavaScript.load(shelfURL + '.json', applyUserData) : applyUserData();
   },
 
   observeButtons: function() {
@@ -208,7 +208,7 @@ var Codeshelver = {
         $shelver = $('#' + id)
         $shelver.css({left: (e.pageX - $shelver.width() / 2) + 'px'});
         $('#shelve_tags').focus();
-        typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '?json=1', addTagsToShelveForm) : addTagsToShelveForm();
+        typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '.json', addTagsToShelveForm) : addTagsToShelveForm();
       }
       return false;
     });
