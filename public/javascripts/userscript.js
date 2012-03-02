@@ -140,9 +140,9 @@ var Codeshelver = {
       var shelvesURL = self.shelvesURLForRepoURL(repoURL);
       var iconStyle = '' +
         '<style type="text/css">' +
-        '.btn-shelve .icon{background:url(' + self.baseURL + '/images/minibutton_icons.png) no-repeat scroll 0 0 transparent;}' +
-        '.btn-shelve:hover .icon{background-position:0 -25px;}' +
-        'ul.repo-stats li.shelves a { background-image:url(' + self.baseURL + '/images/repostat_shelves.png); }'
+        '.pagehead-actions .btn-shelve .icon{background:url(' + self.baseURL + '/images/minibutton_icons.png) no-repeat scroll 0 0 transparent;}' +
+        '.pagehead-actions .btn-shelve:hover .icon{background-position:0 -25px;}' +
+        'ul.repo-stats li.shelves a { background-image:url(' + self.baseURL + '/images/repostat_shelves.png);background-position: 5px -3px; }'
         '</style>';
       var shelveItem = '<li><a class="minibutton btn-watch btn-shelve" id="' + buttonId + '" data-repoid="' + repoId + '" href="' + shelveURL + '">' + button('Shelve') + '</a></li>';
       var applyShelfData = function() {

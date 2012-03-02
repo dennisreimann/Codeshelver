@@ -23,7 +23,8 @@ body {
   margin: 0 .75em 0 0;
   border: 1px solid #DDD;
   padding: 1px;
-  background: #FFF;}
+  background: #FFF;
+  width: 50px;}
 #head .welcome {
   font-size: 1.25em;
   margin: 0 0 .05em 0;
@@ -123,7 +124,7 @@ ul#twitter_update_list {
   margin: 0 0 1.25em 0;
   padding: 0 0 0 1em;}
 ul#twitter_update_list li {
-  padding: .25em 0 ;}
+  padding: .25em 0;}
 ul#twitter_update_list li:first-child {
   border-top: none;}
 

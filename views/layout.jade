@@ -14,7 +14,7 @@ html(lang="en")
     #wrap
       #head
         - if (user)
-          img.avatar(src='https://www.gravatar.com/avatar/' + user.gravatar + '?size=50&d=http%3A%2F%2Fcodeshelver.com%2Fimages%2Fdefault_gravatar.png')
+          img.avatar(src='https://secure.gravatar.com/avatar/' + user.gravatar + '?size=50&d=http%3A%2F%2Fcodeshelver.com%2Fimages%2Fdefault_gravatar.png')
           .welcome Hello #{user.login}!
           .nav
             !{linkTo('Your shelf', '/shelf')}
