@@ -1,0 +1,4 @@
+check process codeshelver
+with pidfile /var/www/codeshelver/current/log/server.pid
+  start program = "/sbin/start codeshelver"
+  stop program  = "/sbin/stop codeshelver"

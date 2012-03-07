@@ -13,27 +13,20 @@ set :deploy_tasks, %w(
   vlad:update
   vlad:symlink
   vlad:bundle:install
-  vlad:restart_app
+  vlad:app:restart
   vlad:cleanup
 )
 
 require 'bundler/vlad'
 
 namespace :vlad do
-
-  desc 'Start the app'
-  remote_task :start_app, :roles => :app do
-    run "/etc/init.d/express_app #{application} start"
+  namespace :app do
+    %w(start restart stop status).each do |task|
+      desc "#{task.capitalize} amon"
+      remote_task task.to_sym, :roles => :app do
+        puts "[App] #{task.capitalize}"
+        sudo "#{task} #{application}"
+      end
+    end
   end
-
-  desc 'Stop the app'
-  remote_task :stop_app, :roles => :app do
-    run "/etc/init.d/express_app #{application} stop"
-  end
-
-  desc 'Restart the app'
-  remote_task :restart_app, :roles => :app do
-    %w(stop_app start_app).each { |task| Rake::Task["vlad:#{task}"].invoke }
-  end
-
 end
