@@ -2,4 +2,7 @@
 .DS_Store
 .rvmrc
 config/app.js
+node_modules/mocha
+node_modules/.bin/mocha
+node_modules/.bin/_mocha
 log/**

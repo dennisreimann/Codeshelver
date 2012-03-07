@@ -7,4 +7,6 @@
   , "oauth" : "0.9.x"
   , "connect" : "2.0.x"
   , "connect-auth" : "0.5.x"
-  , "felix-couchdb" : "1.0.x" } }
+  , "felix-couchdb" : "1.0.x" }
+, "devDependencies": {
+    "mocha": "0.14.x" } }
