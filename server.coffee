@@ -64,7 +64,7 @@ app.configure ->
   app.set 'oauth accessTokenPath', 'login/oauth/access_token'
   app.set 'oauth callbackPath', '/oauth/callback'
   app.set 'port', if process.env.EXPRESS_PORT then parseInt(process.env.EXPRESS_PORT) else 3000
-  app.set 'views', __dirname + '/views'
+  app.set 'views', "#{__dirname}/views"
   app.set 'view engine', 'jade'
 
 app.configure 'development', ->
@@ -78,7 +78,7 @@ app.configure 'production', ->
   app.use express.logger()
 
 # Middleware - take care, the order of these matters!
-app.use express.favicon(pubDir + '/favicon.ico')
+app.use express.favicon("#{pubDir}/favicon.ico")
 app.use express.compiler({ src: pubDir, enable: ['sass'] })
 app.use express.bodyParser()
 app.use express.static(pubDir)
