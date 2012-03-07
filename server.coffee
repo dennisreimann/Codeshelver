@@ -71,14 +71,15 @@ app.configure 'development', ->
   app.set 'baseURL', "http://codeshelver.dev:#{app.set('port')}"
   app.set 'reload views', 1000
   app.use express.errorHandler(dumpExceptions: true, showStack: true)
+  app.use express.logger('dev')
 
 app.configure 'production', ->
   app.set 'baseURL', 'https://www.codeshelver.com'
+  app.use express.logger()
 
 # Middleware - take care, the order of these matters!
 app.use express.favicon(pubDir + '/favicon.ico')
 app.use express.compiler({ src: pubDir, enable: ['sass'] })
-app.use express.logger({ format: ':method :url :response-time' })
 app.use express.bodyParser()
 app.use express.static(pubDir)
 app.use express.methodOverride()
