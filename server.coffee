@@ -104,7 +104,7 @@ app.get '/signout', (req, res) ->
   res.clearCookie 'user'
   res.redirect '/'
 
-app.get app.set 'oauth callbackPath', (req, res) ->
+app.get app.set('oauth callbackPath'), (req, res) ->
   req.authenticate ['github'], (error, authenticated) ->
     console.log "Github authentication failed: #{error}" if error and app.set('debug')
     if authenticated
