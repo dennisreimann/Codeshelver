@@ -100,7 +100,7 @@ var Codeshelver = {
       var repo = item.value.repo;
       repoList += '' +
         '   <li class="public source">' +
-        '     <a href="http://github.com/' + repo.owner + '/' + repo.name + '">' +
+        '     <a href="https://github.com/' + repo.owner + '/' + repo.name + '">' +
         '       <span class="owner">' + repo.owner + '</span>/<span class="repo">' + repo.name + '</span>' +
         '     </a>' +
         '   </li>';
