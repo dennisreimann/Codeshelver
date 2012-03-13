@@ -1,4 +1,5 @@
-config = require "#{__dirname}/config/app.js"
+appEnv = process.env.NODE_ENV or 'development'
+config = require("#{__dirname}/config/app.js")[appEnv]
 connect = require 'connect'
 utils = require 'util'
 express = require 'express'
@@ -6,6 +7,13 @@ OAuth2 = require('oauth').OAuth2
 auth = require 'connect-auth'
 couchdb = require 'felix-couchdb'
 jade = require 'jade'
+fs = require 'fs'
+
+# server config
+serverOpts = {}
+if config.server and config.server.keyFile and config.server.certFile
+  serverOpts['key'] = fs.readFileSync(config.server.keyFile)
+  serverOpts['cert'] = fs.readFileSync(config.server.certFile)
 
 app = module.exports = express.createServer()
 pubDir = "#{__dirname}/public"
@@ -36,26 +44,6 @@ app.helpers
     text = "#{owner}/#{name}" unless text
     "<a href=#{url}'>#{text}</a>"
 
-# Authentication middleware
-signinFromCookie = (req, res, next) ->
-  userCookie = req.cookies.user
-  if userCookie
-    try
-      req.session.user = JSON.parse(userCookie)
-    catch e
-      res.clearCookie('user')
-  next()
-
-requireLogin = (req, res, next) ->
-  user = req.session.user
-  if user
-    next()
-  else
-    # Buffer the request and authenticate
-    tags = if req.body and req.body.tags then req.body.tags else null
-    req.session.buffer = returnURL: req.url, tags: tags
-    res.redirect '/signin'
-
 # Configuration
 app.configure ->
   app.set 'debug', true
@@ -77,6 +65,27 @@ app.configure 'production', ->
   app.set 'baseURL', 'https://www.codeshelver.com'
   app.use express.logger()
 
+# Authentication middleware
+signinFromCookie = (req, res, next) ->
+  userCookie = req.cookies.user
+  if userCookie
+    try
+      req.session.user = JSON.parse(userCookie)
+    catch e
+      res.clearCookie('user')
+  next()
+
+requireLogin = (req, res, next) ->
+  user = req.session.user
+  if user
+    next()
+  else
+    # Buffer the request and authenticate
+    req.session.buffer =
+      returnURL: req.url
+      tags: if req.body and req.body.tags then req.body.tags else null
+    res.redirect "#{app.set('baseURL')}/signin"
+
 # Middleware - take care, the order of these matters!
 app.use express.favicon("#{pubDir}/favicon.ico")
 app.use express.compiler({ src: pubDir, enable: ['sass'] })
@@ -84,16 +93,16 @@ app.use express.bodyParser()
 app.use express.static(pubDir)
 app.use express.methodOverride()
 app.use express.cookieParser()
-app.use express.session({ secret: config[app.set('env')].sessionKey, cookie: { secure: true }})
+app.use express.session({ secret: config.sessionKey, cookie: { secure: true }})
 app.use auth([auth.Github({
-  appId: config[app.set('env')].oauth.clientId,
-  appSecret: config[app.set('env')].oauth.secret,
-  callback: app.set('baseURL') + app.set('oauth callbackPath')
+  appId: config.oauth.clientId,
+  appSecret: config.oauth.secret,
+  callback: "#{app.set('baseURL')}#{app.set('oauth callbackPath')}"
 })])
 app.use signinFromCookie
 
 # GitHub OAuth 2.0, see: http://github.com/account/applications
-oauth = new OAuth2(config[app.set('env')].oauth.clientId, config[app.set('env')].oauth.secret,
+oauth = new OAuth2(config.oauth.clientId, config.oauth.secret,
   app.set('oauth baseURL'), app.set('oauth authorizePath'), app.set('oauth accessTokenPath'));
 
 app.get '/signin', (req, res) ->
@@ -103,7 +112,7 @@ app.get '/signout', (req, res) ->
   req.logout()
   req.session.destroy()
   res.clearCookie 'user'
-  res.redirect '/'
+  res.redirect app.set('baseURL')
 
 app.get app.set('oauth callbackPath'), (req, res) ->
   req.authenticate ['github'], (error, authenticated) ->
@@ -121,7 +130,10 @@ app.get app.set('oauth callbackPath'), (req, res) ->
     else
       req.flash 'info', 'Unfortunately we could not sign you in, did you allow Codeshelver to access your GitHub account?'
     # Redirect back or default to root url
-    returnTo = if req.session.buffer then req.session.buffer.returnURL else '/'
+    returnTo = app.set('baseURL')
+    if req.session.buffer
+      returnTo += req.session.buffer.returnURL if req.session.buffer.returnURL
+      req.session.buffer = null
     res.redirect returnTo
 
 # Actions
