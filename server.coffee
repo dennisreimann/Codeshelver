@@ -42,7 +42,7 @@ app.helpers
   linkRepo: (owner, name, text) ->
     url = "https://github.com/#{owner}/#{name}"
     text = "#{owner}/#{name}" unless text
-    "<a href=#{url}'>#{text}</a>"
+    "<a href='#{url}'>#{text}</a>"
 
 # Configuration
 app.configure ->
