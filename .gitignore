@@ -1,8 +1,10 @@
 .bundle
 .DS_Store
 .rvmrc
+.ruby-version
 config/app.js
 node_modules/mocha
 node_modules/.bin/mocha
 node_modules/.bin/_mocha
 log/**
+vendor/ruby
