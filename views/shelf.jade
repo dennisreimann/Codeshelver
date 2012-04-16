@@ -36,7 +36,7 @@
           form(method='post', action='/shelve/' + repo.value.repo.owner + '/' + repo.value.repo.name)
             input(type='hidden', name='_method', value='delete')
             button.delete(type='submit') delete
-  p
-    | You reached the end of your shelf!
-    br
-    | Now go to !{linkTo('GitHub', 'https://github.com')} and find some more repos :)
+  p You reached the end of your shelf!
+  - if (tag)
+    p
+      | Here are !{linkTo('popular repos tagged with ' + tag, '/popular?tag=' + tag)}.

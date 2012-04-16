@@ -27,5 +27,10 @@ ul#repos.items
       .options
         form(method='get', action='/shelve/' + owner + '/' + name)
           button.edit(type='submit') shelve
+
+- if (tag)
+  p
+    | Here are !{linkTo('your shelved repos tagged with ' + tag, '/shelf?tag=' + tag)}.
+
 p
   | Besides these there are also some more !{linkTo('interesting repos', 'https://github.com/repositories')} :)
