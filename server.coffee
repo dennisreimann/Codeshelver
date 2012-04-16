@@ -275,16 +275,16 @@ app.post '/shelve/:owner/:repo', requireLogin, (req, res) ->
   owner = req.params.owner
   repo = repoNameFix(req.params.repo, req.params.format)
   tags = if req.body.tags then req.body.tags.toLowerCase().trim().replace(/,/g, " ").split(/\s+/) else []
-  repoURL = "http://github.com/api/v2/json/repos/show/#{owner}/#{repo}"
+  repoURL = "https://api.github.com/repos/#{owner}/#{repo}"
   oauth.get repoURL, user.accessToken, (error, data, response) ->
     # Hande errors
     if error
       console.log "Retrieving repository data failed: #{error.data}" if app.set('debug')
     else
       try
-        repository = JSON.parse(data).repository
+        repository = JSON.parse(data)
       catch e
-        console.log("Could not parse repository data: #{data}") if app.set('debug')
+        console.log "Could not parse repository data: #{data}" if app.set('debug')
     # Proceed
     if repository
       key = "#{user.id}-#{owner}-#{repo}"
