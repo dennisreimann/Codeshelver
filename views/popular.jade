@@ -5,9 +5,9 @@ p
   | Codeshelver contains #{totalRepos} repositor#{(totalRepos == 1 ? 'y' : 'ies')}
   - if (tag)
     | tagged with #{em= tag}.
-  - else
+  - if (totalRepos > reposLimit)
     br
-    | Here are the #{reposLimit} most popular tags and repos
+    | Here are the #{reposLimit} most popular ones.
 
 - if (!tag)
   #tagcloud

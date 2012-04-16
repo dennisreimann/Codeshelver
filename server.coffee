@@ -152,7 +152,7 @@ app.get '/popular', (req, res) ->
     console.log JSON.stringify(error) if error and app.set('debug')
     repos = data.rows.sort (a, b) -> b.value - a.value
     reposLimit = 25
-    popularRepos = if tag then repos else repos.slice(0, reposLimit) # Limit the repos if there is no tag
+    popularRepos = repos.slice(0, reposLimit)
     # popular tags
     db.request '/_design/tags/_view/popular', group: true, (error, data) ->
       console.log JSON.stringify(error) if error and app.set('debug')
