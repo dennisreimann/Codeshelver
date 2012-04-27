@@ -297,7 +297,7 @@ app.post '/shelve/:owner/:repo', requireLogin, (req, res) ->
               id: user.id
               login: user.login
             repo:
-              owner: repository.owner
+              owner: repository.owner.login
               name: repository.name
         # Set or update all values that are changable,
         # in this case the tags and the description
