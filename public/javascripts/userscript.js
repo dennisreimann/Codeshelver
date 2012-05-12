@@ -84,7 +84,7 @@ var Codeshelver = {
   },
 
   addShelveLink: function() {
-    $('.topsearch .nav li:nth-child(2)').after('<li><a href="' + this.baseURL + '/shelf">Shelf</a></li>');
+    $('.topsearch .top-nav li:nth-child(2)').after('<li><a href="' + this.baseURL + '/shelf">Shelf</a></li>');
   },
 
   addShelvedReposList: function() {
@@ -101,7 +101,10 @@ var Codeshelver = {
       repoList += '' +
         '   <li class="public source">' +
         '     <a href="https://github.com/' + repo.owner + '/' + repo.name + '">' +
-        '       <span class="owner">' + repo.owner + '</span>/<span class="repo">' + repo.name + '</span>' +
+        '       <span class="mini-icon public-repo"></span>' +
+        '       <span class="owner">' + repo.owner + '</span>/' +
+        '       <span class="repo">' + repo.name + '</span>' +
+        '       <span class="arrow"></span>' +
         '     </a>' +
         '   </li>';
     });
@@ -131,28 +134,24 @@ var Codeshelver = {
   adjustRepoPage: function() {
     var self = this;
 
-    $('.site ul.pagehead-actions li').has('a.btn-watch').each(function() {
-      var button = function(text) { return '<span><span class="icon"></span> ' + text + '</span>'; };
+    $('.site ul.pagehead-actions li.watch-button-container').each(function() {
+      var button = function(text, count) { return '<span class="icon"></span> ' + (count ? '<i class="js-shelfs-count">' + count + '</i> ' : '') + text; };
       var buttonId = 'shelve_button';
       var repoURL = location.href;
       var repoId = self.repoIdForURL(repoURL);
       var shelveURL = self.shelveURLForRepoURL(repoURL);
       var shelvesURL = self.shelvesURLForRepoURL(repoURL);
-      var iconStyle = '' +
-        '<style type="text/css">' +
-        '.pagehead-actions .btn-shelve .icon{background:url(' + self.baseURL + '/images/minibutton_icons.png) no-repeat scroll 0 0 transparent;}' +
-        '.pagehead-actions .btn-shelve:hover .icon{background-position:0 -25px;}' +
-        'ul.repo-stats li.shelves a { background-image:url(' + self.baseURL + '/images/repostat_shelves.png);background-position: 5px -3px; }'
-        '</style>';
-      var shelveItem = '<li><a class="minibutton btn-watch btn-shelve" id="' + buttonId + '" data-repoid="' + repoId + '" href="' + shelveURL + '">' + button('Shelve') + '</a></li>';
+      var shelveItem = '' +
+      ' <li class="shelve-button-container">' +
+      '   <a class="minibutton btn-i-type-i-switcher switcher count btn-watches btn-shelve lighter" data-repoid="' + repoId + '" href="' + shelveURL + '">' +
+      '     <span id="' + buttonId + '">' + button('Shelve') + '</span>' +
+      '   </a>' +
+      ' </li>';
       var applyShelfData = function() {
         var shelfItem = Codeshelver.repos[repoId];
-        if (shelfItem.repo) $('#' + buttonId).html(button('Shelved'));
-        $('.repo-stats').prepend('<li class="shelves"><a class="tooltipped downwards" title="Shelves" href="' + shelvesURL + '">' + shelfItem.shelvesCount + '</a></li>');
-        $('.repo-stats .shelves a').tipsy();
+        if (shelfItem.repo) $('#' + buttonId).html(button('Shelved', shelfItem.shelvesCount));
       };
       $(this).before(shelveItem);
-      $('body').append(iconStyle);
       typeof(Codeshelver.repos[repoId]) == "undefined" ? JavaScript.load(shelveURL + '.json', applyShelfData) : applyShelfData();
     });
   },
@@ -169,7 +168,6 @@ var Codeshelver = {
       if (!user || !user.length) return;
       $('ul.stats').append('<li><a href="' + shelfURL + '"><strong>' + user.length + '</strong><span>shelved repos</span></a></li>');
     };
-    $('.userpage ul.actions').append('<li><a class="minibutton" href="' + shelfURL + '"><span>Shelf</span></a></li>');
     typeof(Codeshelver.users[login]) == "undefined" ? JavaScript.load(shelfURL + '.json', applyUserData) : applyUserData();
   },
 
