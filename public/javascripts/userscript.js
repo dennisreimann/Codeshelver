@@ -135,18 +135,22 @@ var Codeshelver = {
     var self = this;
 
     $('.site ul.pagehead-actions li.watch-button-container').each(function() {
-      var button = function(text, count) { return '<span class="icon"></span> ' + (count ? '<i class="js-shelfs-count">' + count + '</i> ' : '') + text; };
       var buttonId = 'shelve_button';
       var repoURL = location.href;
       var repoId = self.repoIdForURL(repoURL);
       var shelveURL = self.shelveURLForRepoURL(repoURL);
       var shelvesURL = self.shelvesURLForRepoURL(repoURL);
-      var shelveItem = '' +
-      ' <li class="shelve-button-container">' +
-      '   <a class="minibutton btn-i-type-i-switcher switcher count btn-watches btn-shelve lighter" data-repoid="' + repoId + '" href="' + shelveURL + '">' +
-      '     <span id="' + buttonId + '">' + button('Shelve') + '</span>' +
-      '   </a>' +
-      ' </li>';
+      var button = function(text, count) {
+        btn = '' +
+          ' <a class="minibutton btn-watch btn-shelve lighter" data-repoid="' + repoId + '" href="' + shelveURL + '">' +
+          '   <span><span class="icon"></span> ' + text + '</span>' +
+          ' </a>';
+        if (count) {
+          btn += '<a class="social-count js-social-count" href="' + shelvesURL + '">' + count + '</a>';
+        }
+        return btn;
+      };
+      var shelveItem = '<li id="' + buttonId + '" class="js-social-container shelve-button-container">' + button('Shelve') + '</li>';
       var applyShelfData = function() {
         var shelfItem = Codeshelver.repos[repoId];
         if (shelfItem.repo) $('#' + buttonId).html(button('Shelved', shelfItem.shelvesCount));
