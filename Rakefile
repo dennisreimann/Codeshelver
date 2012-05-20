@@ -1,5 +1,5 @@
-require "rubygems"
-require "bundler/setup"
+require 'rubygems'
+require 'bundler/setup'
 
 begin
   require 'vlad'
@@ -11,14 +11,14 @@ end
 
 begin
   require 'couchrest'
-
   DB_URL = 'http://127.0.0.1:5984/codeshelver'
 
   namespace :db do
-    task :setup do
-      @db = CouchRest.database!(DB_URL)
+    desc "Sets up #{DB_URL}"
+    task :setup do |t|
+      db = CouchRest.database!(DB_URL)
       # shelve
-      @db.save_doc({
+      db.save_doc({
         "_id" => "_design/shelve",
         :views => {
           :by_user_id => {
@@ -36,7 +36,7 @@ begin
         }
       })
       # repos
-      @db.save_doc({
+      db.save_doc({
         "_id" => "_design/repos",
         :views => {
           :popular => {
@@ -53,7 +53,7 @@ begin
         }
       })
       # tags
-      @db.save_doc({
+      db.save_doc({
         "_id" => "_design/tags",
         :views => {
           :popular => {
@@ -63,8 +63,25 @@ begin
         }
       })
     end
-    task :delete do
+    desc "Deletes #{DB_URL}"
+    task :delete do |t|
       CouchRest.database(DB_URL).delete!
+    end
+    namespace :maintenance do
+      desc "Cleans up cases where repo owners got stored as info hashes instead of their login"
+      task :clean_repo_owners do |t|
+        cleaned = 0
+        db = CouchRest.database!(DB_URL)
+        db.documents['rows'].each do |doc|
+          if doc['id'].to_i > 0 && d = db.get(doc['id'])
+            if d['repo'] && d['repo']['owner'].is_a?(Hash)
+              d['repo']['owner'] = d['repo']['owner']['login']
+              cleaned += 1 if d.save
+            end
+          end
+        end
+        puts "Cleaned #{cleaned} docs"
+      end
     end
   end
 rescue LoadError
