@@ -1,6 +1,6 @@
 set :user, "deploy"
 set :application, "codeshelver"
-set :domain, "www.codeshelver.com"
+set :domain, "innovated.de"
 set :deploy_to, "/var/www/#{application}"
 set :repository, "git@github.com:dbloete/Codeshelver.git"
 set :copy_shared, { 'config/app.js' => 'config/app.js' }
@@ -18,3 +18,15 @@ set :deploy_tasks, %w(
 )
 
 require 'bundler/vlad'
+
+namespace :vlad do
+  namespace :app do
+    %w(start restart stop status).each do |task|
+      desc "#{task.capitalize} amon"
+      remote_task task.to_sym, :roles => :app do
+        puts "[App] #{task.capitalize}"
+        sudo "#{task} #{application}"
+      end
+    end
+  end
+end
