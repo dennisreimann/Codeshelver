@@ -12,7 +12,7 @@
   // added or GitHub changes something (like their markup). Also
   // disables the buttons in case codeshelver.com is not available.
   var script = document.createElement('script');
-  script.src = 'https://www.codeshelver.com/javascripts/userscript.js?v=2012051101';
+  script.src = 'https://www.codeshelver.com/javascripts/userscript.js?v=2012060501';
   script.type = 'text/javascript';
   document.getElementsByTagName('head')[0].appendChild(script);
 })();
