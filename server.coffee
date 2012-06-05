@@ -23,7 +23,7 @@ db = client.db 'codeshelver'
 # FIXME: Using the format parameter is just a workaround for the problem described here:
 # https://github.com/senchalabs/connect/issues#issue/83
 repoNameFix = (name, format) ->
-  if format and format isnt 'json' then "#{name}.#{format}" else name
+  if format and format isnt 'json' and format isnt 'js' then "#{name}.#{format}" else name
 
 # Helpers
 apostrophize = (s) ->
@@ -193,6 +193,9 @@ app.get '/shelf.:format?', requireLogin, (req, res) ->
     if req.is('javascript') or req.params.format is 'js'
       res.contentType 'javascript'
       res.send "Codeshelver.shelf = #{if data then JSON.stringify(data.rows) else null};", {}, 200
+    else if req.is('json') or req.params.format is 'json'
+      res.contentType 'json'
+      res.send JSON.stringify(data.rows), {}, 200
     else
       req.flash('info', "#{error.error}: #{error.reason}") if (error)
       res.render 'shelf',
