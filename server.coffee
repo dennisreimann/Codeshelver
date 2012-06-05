@@ -190,7 +190,7 @@ app.get '/shelf.:format?', requireLogin, (req, res) ->
   opts = if tag then startkey: [user.id, tag], endkey: [user.id, tag] else startkey: [user.id], endkey: [user.id]
   db.request queryURL, opts, (error, data) ->
     console.log JSON.stringify(error) if error and app.set('debug')
-    if req.is('json') or req.params.format is 'json'
+    if req.is('javascript') or req.params.format is 'js'
       res.contentType 'javascript'
       res.send "Codeshelver.shelf = #{if data then JSON.stringify(data.rows) else null};", {}, 200
     else
@@ -212,7 +212,7 @@ app.get '/shelf/:login.:format?', (req, res) ->
   opts = if tag then startkey: [login, tag], endkey: [login, tag] else startkey: [login], endkey: [login]
   db.request queryURL, opts, (error, data) ->
     console.log JSON.stringify(error) if error and app.set('debug')
-    if req.is('json') or req.params.format is 'json'
+    if req.is('javascript') or req.params.format is 'js'
       res.contentType 'javascript'
       res.send "Codeshelver.users['#{login}'] = #{if data then JSON.stringify(data.rows) else null};", {}, 200
     else
@@ -246,7 +246,7 @@ app.get '/shelve/:owner/:repo.:format?', requireLogin, (req, res) ->
   key = "#{user.id}-#{owner}-#{repo}"
   db.getDoc key, (error, doc) ->
     console.log JSON.stringify(error) if error and app.set('debug')
-    if req.is('json') or req.params.format == 'json'
+    if req.is('javascript') or req.params.format is 'js'
       # load shelf count
       db.request '/_design/repos/_view/popular', startkey: [owner, repo], endkey: [owner, repo], (error, data) ->
         console.log JSON.stringify(error) if error and app.set('debug')
