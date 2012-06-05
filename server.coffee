@@ -191,7 +191,7 @@ app.get '/shelf.:format?', requireLogin, (req, res) ->
   db.request queryURL, opts, (error, data) ->
     console.log JSON.stringify(error) if error and app.set('debug')
     if req.is('javascript') or req.params.format is 'js'
-      res.contentType 'javascript'
+      res.contentType 'js'
       res.send "Codeshelver.shelf = #{if data then JSON.stringify(data.rows) else null};", {}, 200
     else if req.is('json') or req.params.format is 'json'
       res.contentType 'json'
@@ -216,7 +216,7 @@ app.get '/shelf/:login.:format?', (req, res) ->
   db.request queryURL, opts, (error, data) ->
     console.log JSON.stringify(error) if error and app.set('debug')
     if req.is('javascript') or req.params.format is 'js'
-      res.contentType 'javascript'
+      res.contentType 'js'
       res.send "Codeshelver.users['#{login}'] = #{if data then JSON.stringify(data.rows) else null};", {}, 200
     else
       req.flash('info', "#{error.error}: #{error.reason}") if (error)
@@ -259,7 +259,7 @@ app.get '/shelve/:owner/:repo.:format?', requireLogin, (req, res) ->
         else
           doc = shelvesCount: count
         # return the result
-        res.contentType 'javascript'
+        res.contentType 'js'
         res.send "Codeshelver.repos['#{owner}/#{repo}'] = #{JSON.stringify(doc)};", {}, 200
     else
       tags = if doc then doc.tags.join(" ") else ''
