@@ -2,7 +2,7 @@ set :user, "deploy"
 set :application, "codeshelver"
 set :domain, "www.codeshelver.com"
 set :deploy_to, "/var/www/#{application}"
-set :repository, "git@github.com:dbloete/Codeshelver.git"
+set :repository, "git@github.com:dennisreimann/Codeshelver.git"
 set :copy_shared, { 'config/app.js' => 'config/app.js' }
 set :symlinks, { 'config/app.js' => 'config/app.js' }
 set :revision, "origin/master"
