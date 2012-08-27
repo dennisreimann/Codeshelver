@@ -36,7 +36,7 @@ app.dynamicHelpers
   user: (req) ->
     req.session.user
 
-app.helpers
+app.locals
   apostrophize: apostrophize
   linkTo: (text, url) -> "<a href='#{url}'>#{text}</a>"
   linkRepo: (owner, name, text) ->
@@ -97,7 +97,8 @@ app.use express.session({ secret: config.sessionKey, cookie: { secure: true }})
 app.use auth([auth.Github({
   appId: config.oauth.clientId,
   appSecret: config.oauth.secret,
-  callback: "#{app.set('baseURL')}#{app.set('oauth callbackPath')}"
+  callback: "#{app.set('baseURL')}#{app.set('oauth callbackPath')}",
+  scope: "repo"
 })])
 app.use signinFromCookie
 
@@ -181,6 +182,26 @@ app.get '/popular', (req, res) ->
           totalRepos: parseInt(repos.length)
           minTagCount: minTagCount
           maxTagCount: maxTagCount
+
+app.get '/convert', requireLogin, (req, res) ->
+  user = req.session.user
+  queryURL = '/_design/shelve/_view/by_user_id'
+  opts = startkey: [user.id], endkey: [user.id]
+  db.request queryURL, opts, (error, data) ->
+    console.log JSON.stringify(error) if error and app.set('debug')
+    if (error)
+      req.flash('info', "#{error.error}: #{error.reason}")
+    else
+      repos = data.rows
+      headers = 'Content-Type': 'application/json'
+      body = ''
+      for id, repoData of repos
+        repo = repoData.value.repo
+        oauth.put "https://api.github.com/user/starred/#{repo.owner}/#{repo.name}", user.accessToken, headers, body, (err, data, response) ->
+          # Hande errors
+          console.log "Starring #{repo.owner}/#{repo.name} failed: #{err.data} (#{err.statusCode})" if err and app.set('debug')
+      req.flash('info', "Your #{parseInt(data.rows.length)} repos have been starred.")
+    res.redirect "/shelf"
 
 app.get '/shelf.:format?', requireLogin, (req, res) ->
   user = req.session.user

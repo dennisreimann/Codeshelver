@@ -6,6 +6,8 @@
         input(type='text', id='filter_tag', name='tag', value=tag)
         button(type='submit') filter by tag
 
+!=partial('_closing')
+
 - if (totalRepos == 0)
   p
     - if (tag)
